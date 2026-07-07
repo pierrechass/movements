@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Practice — Month 3: Integration</title>
+</head>
+<body>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+img{max-width:100%;height:auto;}
+
+:root{
+  --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC;
+  --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49;
+  --ember:#8C4E2C; --ember-deep:#743E22;
+  --line:#C9C3AC; --line-soft:#D8D3BE;
+  --spine:var(--ember);
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+  --radius:3px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+}
+:root[data-theme="dark"]{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+:root[data-theme="light"]{ --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC; --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49; --ember:#8C4E2C; --ember-deep:#743E22; --line:#C9C3AC; --line-soft:#D8D3BE; }
+*{box-sizing:border-box;}
+body{margin:0; background:var(--stone); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.55;}
+a{color:var(--moss-deep); text-decoration-color:var(--line);}
+@media (prefers-color-scheme:dark){a{color:var(--moss-bright);}}
+:root[data-theme="dark"] a{color:var(--moss-bright);}
+a:focus-visible{outline:2px solid var(--ember); outline-offset:3px;}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0 0 .4em;}
+.topbar{position:sticky; top:0; z-index:20; background:var(--stone); border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.9rem; padding:.65rem 1.4rem; font-size:.82rem; flex-wrap:wrap;}
+.topbar .mark{width:9px;height:9px;border-radius:50%;background:var(--spine); flex:none;}
+.topbar strong{font-family:var(--font-display); font-size:.95rem;}
+.topbar nav{display:flex; gap:1.1rem; margin-left:auto; flex-wrap:wrap;}
+.topbar nav a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent;}
+.topbar nav a:hover, .topbar nav a.current{color:var(--ink); border-bottom-color:var(--spine);}
+.topbar .langsw{display:flex; gap:.35rem; font-size:.78rem;}
+.topbar .langsw a{color:var(--ink-soft); text-decoration:none; padding:.15rem .4rem; border:1px solid transparent; border-radius:3px;}
+.topbar .langsw a:hover{color:var(--ink);}
+.topbar .langsw a.lang-current{color:var(--ink); border-color:var(--line); background:var(--stone-raised);}
+.hero{max-width:920px; margin:0 auto; padding:3rem 1.4rem 1.6rem;}
+.hero .eyebrow{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--ember); margin-bottom:.9rem;}
+.hero h1{font-size:2.4rem; line-height:1.12;}
+.hero p.lede{font-size:1.1rem; color:var(--ink-soft); max-width:660px; margin-top:.8rem;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 1.4rem 6rem; display:grid; grid-template-columns:220px 1fr; gap:2.6rem;}
+@media (max-width:880px){.wrap{grid-template-columns:1fr;} .rail{display:none;}}
+.rail{position:sticky; top:3.4rem; align-self:start; font-size:.84rem; max-height:calc(100vh - 4rem); overflow-y:auto; padding-bottom:2rem;}
+.rail h3{font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-weight:600; margin-bottom:.6rem;}
+.rail ul{list-style:none; margin:0 0 1.4rem; padding:0;}
+.rail li{margin-bottom:.35rem;}
+.rail a{color:var(--ink-soft); text-decoration:none;}
+.rail a:hover{color:var(--ink);}
+main > section{margin-bottom:3rem;}
+main > section > h2{font-size:1.45rem; border-bottom:1px solid var(--line); padding-bottom:.5rem; margin-bottom:1rem;}
+main > section > p.intro{color:var(--ink-soft); max-width:680px; margin-bottom:1.2rem;}
+.objectives{display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem 1.4rem; list-style:none; padding:0; margin:0;}
+@media (max-width:640px){.objectives{grid-template-columns:1fr;}}
+.objectives li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.6rem .8rem; font-size:.92rem;}
+.tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised);}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px;}
+th,td{padding:.55rem .7rem; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:top;}
+thead th{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+tbody tr:last-child td{border-bottom:none;}
+td.dur{font-family:var(--font-mono); color:var(--ink-soft); white-space:nowrap; font-variant-numeric:tabular-nums;}
+.weekcard{border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised); padding:1.3rem 1.4rem; margin-bottom:1.6rem;}
+.weekcard .whead{display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap; margin-bottom:.3rem;}
+.weekcard .whead .wk{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); background:var(--stone-sunken); border:1px solid var(--line); padding:.15rem .55rem; border-radius:12px;}
+.weekcard h3{font-size:1.18rem; margin:0;}
+.weekcard .goal{color:var(--ink-soft); font-size:.93rem; margin:.3rem 0 1rem;}
+.deltas{font-size:.85rem; color:var(--ink-soft); margin-top:.9rem;}
+.deltas .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.callout{border-left:3px solid var(--ember); background:var(--stone-sunken); padding:.7rem .9rem; border-radius:0 var(--radius) var(--radius) 0; font-size:.9rem; margin-top:.9rem;}
+.callout .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.gate{border:1px solid var(--moss-deep); background:var(--stone-sunken); padding:1rem 1.1rem; border-radius:var(--radius); margin-top:1rem;}
+.gate .fl{font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--moss-deep); margin-bottom:.4rem; display:block;}
+.reslist{list-style:none; padding:0; margin:0; display:grid; gap:.7rem;}
+.reslist li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.7rem .9rem; font-size:.9rem;}
+.reslist .topic{font-weight:600; display:block; margin-bottom:.15rem;}
+.branches{display:grid; grid-template-columns:repeat(2,1fr); gap:1rem;}
+@media (max-width:640px){.branches{grid-template-columns:1fr;}}
+.branch{border:1px dashed var(--line); border-radius:var(--radius); padding:.85rem 1rem; font-size:.9rem;}
+.branch .b-title{font-weight:600; display:block; margin-bottom:.2rem; color:var(--ember);}
+footer{max-width:920px; margin:0 auto; padding:2rem 1.4rem 4rem; color:var(--ink-soft); font-size:.85rem; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;}
+</style>
+
+<div class="topbar">
+  <span class="mark"></span><strong>The Practice</strong>
+  <nav>
+    <a href="index.html">Hub</a>
+    <a href="exercises.html">Exercise Library</a>
+    <a href="month1.html">Month 1</a>
+    <a href="month2.html">Month 2</a>
+    <a href="#" class="current">Month 3</a>
+  </nav>
+  <div class="langsw" aria-label="Language">
+    <a href="month3.html" class="lang-current">EN</a>
+    <a href="month3-fr.html">FR</a>
+    <a href="month3-de.html">DE</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Month 3 of 3 · Weeks 9–12</div>
+  <h1>Integration</h1>
+  <p class="lede">Nothing genuinely new is introduced this month except Scorpion and the full Headstand Hold — both of which are really just Month 1 and 2's qualities recombined. The real work of Month 3 is linking everything into flows and holding yourself to a real mastery bar before calling any skill "done."</p>
+</div>
+
+<div class="wrap">
+<nav class="rail" aria-label="Month 3 contents">
+  <h3>Contents</h3>
+  <ul>
+    <li><a href="#objectives">Technical Objectives</a></li>
+    <li><a href="#start">Start-of-Month Assessment</a></li>
+    <li><a href="#week9">Week 9</a></li>
+    <li><a href="#week10">Week 10</a></li>
+    <li><a href="#week11">Week 11</a></li>
+    <li><a href="#week12">Week 12</a></li>
+    <li><a href="#final">Final Assessment</a></li>
+    <li><a href="#beyond">Beyond Week 12</a></li>
+    <li><a href="#resources">Resources</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<section id="objectives">
+<h2>Technical Objectives — Month 3</h2>
+<p class="intro">By the end of week 12, on top of everything retained from Months 1–2:</p>
+<ul class="objectives">
+<li>Scorpion, 5 controlled reps per side</li>
+<li>A continuous rock-to-shoulder roll, both directions, 5 reps</li>
+<li>At least two self-composed flows linking 4+ patterns fluidly</li>
+<li>Get-Up, multi-directional, both sides, no hands</li>
+<li>Wall-supported Headstand Hold, 20–30s, long line</li>
+<li>Wall Handstand Prep near-full extension hold, 15–20s</li>
+<li>Single-leg balance on an unstable surface, 15s+ per side</li>
+<li>A clear personal sense of which qualities (mobility, control, coordination) are still your weakest link</li>
+</ul>
+</section>
+
+<section id="start">
+<h2>Start-of-Month Assessment</h2>
+<p class="intro">Use Month 2's end-of-month numbers as this month's baseline. Add these three new checks:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Test</th><th>What you record</th><th>Why this test</th></tr></thead>
+<tbody>
+<tr><td>Scorpion attempt</td><td>Can you reach the foot toward the opposite hand with control, even partially? Y/N each side</td><td>Confirms Arch Body + rotational hip mobility are ready to combine</td></tr>
+<tr><td>Continuous rolling attempt</td><td>Can you complete one full rock-to-shoulder roll without stopping mid-way? Y/N</td><td>Checks Stage 1 rolling is solid before chaining it</td></tr>
+<tr><td>Headstand partial extension</td><td>Seconds held with hips partway toward the wall (not yet fully extended)</td><td>Baseline before attempting the full Headstand Hold line</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="week9">
+<div class="weekcard" id="w9">
+<div class="whead"><span class="wk">Week 9</span><h3>Scorpion &amp; Full Extension</h3></div>
+<p class="goal"><strong>Weekly learning objective:</strong> introduce Scorpion as a slow, small-range exploration — not a kick. Begin extending the Headstand and Wall Handstand holds toward fuller lines, still entirely wall-supported.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Component</th><th>Session A</th><th>Session B</th><th>Session C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5m)</td><td>Full sequence + extra spinal segments</td><td>Full sequence</td><td>Full sequence</td></tr>
+<tr><td>Breathing (3m)</td><td>Diaphragmatic ×10</td><td>Diaphragmatic ×8 into Arch hold</td><td>Diaphragmatic ×10</td></tr>
+<tr><td>Core (6m)</td><td>Arch Body extended + rocking, 3×25s</td><td>Hollow Body extended, 3×25s</td><td>Hollow + Arch, 3×25s each</td></tr>
+<tr><td>Active Mobility (7m)</td><td>Deep Squat + Shin Box flow, 5 min</td><td>Wrist loaded holds 3×25s</td><td>Deep Squat + Shin Box flow, 5 min</td></tr>
+<tr><td>Locomotion (9m)</td><td>Scorpion, small range, 4×3/side</td><td>Sit-Through + Beast Crawl, linked, short flow</td><td>Scorpion 3×3/side + Sit-Through 2×2/side</td></tr>
+<tr><td>Balance (4m)</td><td>Single-leg on folded towel, 3×12s/side</td><td>Single-leg eyes closed 3×20s/side</td><td>Single-leg on towel, 3×15s/side</td></tr>
+<tr><td>Exploration (4m)</td><td>Wall Headstand, partial extension, 4×12s</td><td>Wall Handstand walk-up, extend hold, 4×15s</td><td>Wall Headstand partial extension, 4×15s</td></tr>
+<tr><td>Cool-down (3m)</td><td>Body scan</td><td>Seated fold + breathing</td><td>Body scan</td></tr>
+</tbody></table></div>
+<div class="callout"><span class="fl">Watch for</span>In Scorpion: kicking for range instead of reaching under control. If the movement looks jerky, it's too big — shrink the range until it's smooth, then let range grow on its own over weeks.</div>
+</div>
+</section>
+
+<section id="week10">
+<div class="weekcard" id="w10">
+<div class="whead"><span class="wk">Week 10</span><h3>Continuity</h3></div>
+<p class="goal"><strong>Weekly learning objective:</strong> the shoulder roll becomes continuous (Stage 2), Scorpion range grows on both sides, and the Headstand/Wall Handstand holds move toward fuller extension.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Component</th><th>Session A</th><th>Session B</th><th>Session C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5m)</td><td>Full sequence</td><td>Full sequence</td><td>Full sequence</td></tr>
+<tr><td>Breathing (3m)</td><td>Diaphragmatic ×10</td><td>Diaphragmatic ×10</td><td>Diaphragmatic ×10</td></tr>
+<tr><td>Core (6m)</td><td>Hollow + Arch, 3×25s each</td><td>Dead Bug/Bird-Dog, 3×8/side</td><td>Hollow + Arch + Dead Bug rotation</td></tr>
+<tr><td>Active Mobility (7m)</td><td>Deep Squat + Shin Box flow, 5 min</td><td>Wrist + Ankle full round</td><td>Deep Squat + Shin Box flow, 5 min</td></tr>
+<tr><td>Locomotion (9m)</td><td>Scorpion, 4×4/side, fuller range</td><td>Beast Crawl + Traveling Ape, linked flow</td><td>Scorpion 3×4/side + Crab Walk 2×6 steps</td></tr>
+<tr><td>Balance (4m)</td><td>Single-leg on towel, 3×15s/side</td><td>Single-leg on towel + eyes closed, 3×10s/side</td><td>Single-leg on towel, 3×15s/side</td></tr>
+<tr><td>Exploration (4m)</td><td>Continuous shoulder roll, 4×2/direction, soft floor</td><td>Wall Headstand, fuller extension, 4×15s</td><td>Continuous shoulder roll + Wall Headstand, one round each</td></tr>
+<tr><td>Cool-down (3m)</td><td>Body scan</td><td>Body scan</td><td>Body scan</td></tr>
+</tbody></table></div>
+<div class="deltas"><span class="fl">Change from Week 9</span>Rolling becomes continuous rather than a rock; Headstand/Wall Handstand extend closer to a full line; Scorpion range increases only if reps stayed smooth last week.</div>
+</div>
+</section>
+
+<section id="week11">
+<div class="weekcard" id="w11">
+<div class="whead"><span class="wk">Week 11</span><h3>Flow</h3></div>
+<p class="goal"><strong>Weekly learning objective:</strong> stop training patterns in isolation. Build 2–3 personal flows — short sequences you design yourself linking 4 or more patterns — and spend real time in unstructured exploration. This is the most "Movement Culture" week of the program: the goal is fluency, not a checklist.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Component</th><th>Session A</th><th>Session B</th><th>Session C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5m)</td><td>Full sequence</td><td>Full sequence</td><td>Full sequence</td></tr>
+<tr><td>Breathing (3m)</td><td>Diaphragmatic ×10</td><td>Diaphragmatic ×10</td><td>Diaphragmatic ×10</td></tr>
+<tr><td>Core (6m)</td><td>Hollow + Arch, 3×25s each</td><td>Hollow + Arch, 3×25s each</td><td>Hollow + Arch, 3×25s each</td></tr>
+<tr><td>Active Mobility (7m)</td><td>Deep Squat + Shin Box flow, 5 min</td><td>Deep Squat + Shin Box flow, 5 min</td><td>Deep Squat + Shin Box flow, 5 min</td></tr>
+<tr><td>Locomotion (9m)</td><td>Design Flow #1 (e.g. Beast→Sit-Through→Crab→Crab Walk→Ape), rehearse slowly</td><td>Design Flow #2 (e.g. Scorpion→Beast Crawl→shoulder roll→stand), rehearse slowly</td><td>Run both flows, focus on smooth transitions over speed</td></tr>
+<tr><td>Balance (4m)</td><td>Single-leg on towel, eyes closed briefly, 3×10s/side</td><td>Single-leg on towel, eyes closed briefly, 3×10s/side</td><td>Single-leg on towel, eyes closed briefly, 3×10s/side</td></tr>
+<tr><td>Exploration (4m)</td><td>Open exploration — no plan, use only what you've trained</td><td>Open exploration — no plan</td><td>Open exploration, longer if time allows</td></tr>
+<tr><td>Cool-down (3m)</td><td>Body scan</td><td>Body scan</td><td>Body scan</td></tr>
+</tbody></table></div>
+</div>
+</section>
+
+<section id="week12">
+<div class="weekcard" id="w12">
+<div class="whead"><span class="wk">Week 12</span><h3>Consolidation &amp; Final Assessment</h3></div>
+<p class="goal"><strong>Weekly learning objective:</strong> no new material. Refine, then test. Treat the final assessment as its own session rather than squeezing it into a training day.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Component</th><th>Session A</th><th>Session B</th><th>Session C (or standalone)</th></tr></thead>
+<tbody>
+<tr><td>CARs (5m)</td><td>Full sequence</td><td>Full sequence</td><td>Full sequence</td></tr>
+<tr><td>Breathing (3m)</td><td>Diaphragmatic ×10</td><td>Diaphragmatic ×10</td><td>Diaphragmatic ×10</td></tr>
+<tr><td>Core (6m)</td><td>Hollow + Arch, 3×25s each</td><td>Hollow + Arch, 3×25s each</td><td>—</td></tr>
+<tr><td>Active Mobility (7m)</td><td>Deep Squat + Shin Box flow</td><td>Deep Squat + Shin Box flow</td><td>—</td></tr>
+<tr><td>Locomotion (9m)</td><td>Run Flow #1 and #2, ×2 each</td><td>Run Flow #1 and #2, ×2 each</td><td><a href="#final">Final Assessment battery</a> (see below)</td></tr>
+<tr><td>Balance (4m)</td><td>Single-leg on towel, eyes closed, 3×15s/side</td><td>Single-leg on towel, eyes closed, 3×15s/side</td><td>—</td></tr>
+<tr><td>Exploration (4m)</td><td>Open exploration</td><td>Open exploration</td><td>—</td></tr>
+<tr><td>Cool-down (3m)</td><td>Body scan</td><td>Body scan</td><td>Body scan + journal reflection</td></tr>
+</tbody></table></div>
+</div>
+</section>
+
+<section id="final">
+<h2>Final Assessment</h2>
+<p class="intro">Run the complete battery — everything from Months 1 and 2, plus the additions below — in one dedicated session. Record it beneath your Week 8 entries so all four checkpoints (baseline, end of Month 1, end of Month 2, end of Month 3) sit in one continuous table in your journal.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Test</th><th>What you record</th></tr></thead>
+<tbody>
+<tr><td>Scorpion</td><td>Clean reps per side, qualitative range (small / moderate / near opposite hand)</td></tr>
+<tr><td>Continuous rolling</td><td>Reps each direction without stopping mid-roll</td></tr>
+<tr><td>Headstand Hold</td><td>Max seconds, full extended line vs. partial</td></tr>
+<tr><td>Wall Handstand Prep</td><td>Max seconds near-full extension, hollow shape maintained or not</td></tr>
+<tr><td>Single-leg balance, unstable surface</td><td>Seconds per side on a folded towel/cushion</td></tr>
+<tr><td>Self-composed flow</td><td>Can you run a 4+ pattern flow start to finish without stopping to "figure out" the next move? Y/N</td></tr>
+</tbody></table></div>
+<div class="gate">
+<span class="fl">Reading the Result</span>
+<p style="margin:0;">There is no pass/fail here — this is a learning system, not a certification. Compare all four checkpoints side by side. Look specifically for: which qualities improved fastest (usually static holds and CARs range), which lagged (often balance and rolling, since they depend on nervous-system adaptation rather than just tissue capacity), and which skill, if any, you'd want another full month on before moving toward the branches below.</p>
+</div>
+</section>
+
+<section id="beyond">
+<h2>Beyond Week 12</h2>
+<p class="intro">This program deliberately stops at wall-supported inversion and slow, controlled ground flows. The following are the natural next branches of the skill tree — each has a direct prerequisite already built by this program.</p>
+<div class="branches">
+<div class="branch"><span class="b-title">Freestanding Handstand</span>Direct continuation of Wall Handstand Prep + Hollow Body. Requires a dedicated balance-on-hands progression (wall-walk removal, spotted kick-ups) — typically 3–6 more months.</div>
+<div class="branch"><span class="b-title">Dive Roll / Forward Roll variations</span>Continuation of Rolling Patterns once the shoulder roll is fully automatic and you want more dynamic, traveling rolls — best learned with brief in-person coaching for safety.</div>
+<div class="branch"><span class="b-title">Hanging &amp; Pull-Up Progression</span>Continuation of the optional Hanging Preparation entry, once equipment (a bar) is consistently available — active hangs → scapular pulls → first pull-up.</div>
+<div class="branch"><span class="b-title">Loaded Carries &amp; MovNat Terrain Work</span>Taking Get-Up, crawling, and balance outdoors onto uneven natural terrain — logs, slopes, rocks — which is where MovNat's practice actually lives.</div>
+<div class="branch"><span class="b-title">End-Range Strength (PAILs/RAILs)</span>The next layer of Functional Range Conditioning beyond CARs — training active strength at the very end of a range (useful for Scorpion depth and squat depth specifically).</div>
+<div class="branch"><span class="b-title">Cartwheel &amp; Lateral Inversion</span>A different inversion axis than Headstand/Handstand, building on the same balance and wrist-loading foundation, adding a rotational/lateral element.</div>
+</div>
+</section>
+
+<section id="resources">
+<h2>Educational Resources — Month 3</h2>
+<ul class="reslist">
+<li><span class="topic">Animal Flow — "Flow" concept</span>Official Animal Flow content on building your own flows (not just isolated "Form Wave" positions) mirrors exactly what Week 11 asks you to do.</li>
+<li><span class="topic">GMB Fitness / Ido Portal — handstand progression theory</span>Either source's writing on wall-supported handstand progressions will contextualize why this program stays wall-supported and what a safe next step (kick-to-handstand, spotted) looks like.</li>
+<li><span class="topic">Somatic practice &amp; meditative movement</span>Look into Feldenkrais or Somatic Experiencing's framing of "slow movement as a way of listening to the body" — it's the same principle underlying this program's exploration sessions, from a different tradition.</li>
+<li><span class="topic">Functional Range Conditioning — PAILs/RAILs primer</span>A short introduction to end-range isometrics prepares you conceptually for the "Beyond Week 12" branch of the same name.</li>
+</ul>
+</section>
+
+</main>
+</div>
+
+<footer>
+<span><a href="month1.html">Month 1</a> · <a href="month2.html">Month 2</a> · <a href="exercises.html">Exercise Library</a></span>
+<span><a href="index.html">← Hub</a> — Philosophy, Roadmap, Glossary, Journal</span>
+</footer>
+
+<button id="themeToggle" type="button" aria-label="Toggle light or dark theme" title="Toggle light / dark">
+  <span aria-hidden="true">◐</span>
+</button>
+<style>
+#themeToggle{position:fixed;right:1rem;bottom:1rem;z-index:50;width:2.6rem;height:2.6rem;
+ border-radius:50%;border:1px solid var(--line);background:var(--stone-raised);color:var(--ink);
+ font-size:1.1rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);
+ display:flex;align-items:center;justify-content:center;}
+#themeToggle:hover{border-color:var(--moss);}
+#themeToggle:focus-visible{outline:2px solid var(--ember);outline-offset:3px;}
+@media print{#themeToggle{display:none;}}
+</style>
+<script>
+(function(){
+  var root=document.documentElement, KEY='practice-theme';
+  try{var s=localStorage.getItem(KEY); if(s){root.setAttribute('data-theme',s);}}catch(e){}
+  var b=document.getElementById('themeToggle');
+  b&&b.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem(KEY,next);}catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>

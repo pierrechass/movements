@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Pratique — Bibliothèque d'exercices et de compétences</title>
+</head>
+<body>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+img{max-width:100%;height:auto;}
+
+:root{
+  --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC;
+  --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49;
+  --ember:#8C4E2C; --ember-deep:#743E22;
+  --line:#C9C3AC; --line-soft:#D8D3BE;
+  --spine:var(--ember);
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+  --radius:3px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C;
+    --ink:#E9E5D5; --ink-soft:#B7B3A0;
+    --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82;
+    --ember:#C97A4E; --ember-deep:#A85F38;
+    --line:#3A3F32; --line-soft:#2C3026;
+  }
+}
+:root[data-theme="dark"]{
+  --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C;
+  --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82;
+  --ember:#C97A4E; --ember-deep:#A85F38;
+  --line:#3A3F32; --line-soft:#2C3026;
+}
+:root[data-theme="light"]{
+  --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC;
+  --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49;
+  --ember:#8C4E2C; --ember-deep:#743E22;
+  --line:#C9C3AC; --line-soft:#D8D3BE;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0; background:var(--stone); color:var(--ink);
+  font-family:var(--font-body); font-size:16px; line-height:1.55;
+  text-rendering:optimizeLegibility;
+}
+a{color:var(--moss-deep); text-decoration-color:var(--line);}
+:root[data-theme="dark"] a, @media (prefers-color-scheme:dark){a{color:var(--moss-bright);}}
+a:focus-visible, button:focus-visible, summary:focus-visible{outline:2px solid var(--ember); outline-offset:3px;}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0 0 .4em;}
+.topbar{
+  position:sticky; top:0; z-index:20; background:var(--stone); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:.9rem; padding:.65rem 1.4rem; font-size:.82rem;
+}
+.topbar .mark{width:9px;height:9px;border-radius:50%;background:var(--spine); flex:none;}
+.topbar strong{font-family:var(--font-display); font-size:.95rem; letter-spacing:.01em;}
+.topbar nav{display:flex; gap:1.1rem; margin-left:auto; flex-wrap:wrap;}
+.topbar nav a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent;}
+.topbar nav a:hover, .topbar nav a.current{color:var(--ink); border-bottom-color:var(--spine);}
+.topbar .langsw{display:flex; gap:.35rem; font-size:.78rem;}
+.topbar .langsw a{color:var(--ink-soft); text-decoration:none; padding:.15rem .4rem; border:1px solid transparent; border-radius:3px;}
+.topbar .langsw a:hover{color:var(--ink);}
+.topbar .langsw a.lang-current{color:var(--ink); border-color:var(--line); background:var(--stone-raised);}
+.hero{
+  max-width:920px; margin:0 auto; padding:3.2rem 1.4rem 2rem;
+}
+.hero .eyebrow{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--ember); margin-bottom:.9rem;}
+.hero h1{font-size:2.5rem; line-height:1.1;}
+.hero p.lede{font-size:1.12rem; color:var(--ink-soft); max-width:640px; margin-top:.8rem;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 1.4rem 6rem; display:grid; grid-template-columns:220px 1fr; gap:2.6rem;}
+@media (max-width:880px){.wrap{grid-template-columns:1fr;} .rail{display:none;}}
+.rail{position:sticky; top:3.4rem; align-self:start; font-size:.84rem; max-height:calc(100vh - 4rem); overflow-y:auto; padding-bottom:2rem;}
+.rail h3{font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-family:var(--font-body); font-weight:600; margin-bottom:.6rem;}
+.rail ul{list-style:none; margin:0 0 1.6rem; padding:0;}
+.rail li{margin-bottom:.35rem;}
+.rail a{color:var(--ink-soft); text-decoration:none; display:block; padding:.15rem 0;}
+.rail a:hover{color:var(--ink);}
+.legend{display:flex; flex-direction:column; gap:.3rem; font-size:.78rem; color:var(--ink-soft); margin-top:.2rem;}
+.legend .lg-item{display:flex; align-items:center; gap:.5rem;}
+.legend .sw{width:10px;height:10px;border-radius:2px; flex:none;}
+main{min-width:0;}
+main > section{margin-bottom:3.2rem;}
+main > section > h2{font-size:1.5rem; border-bottom:1px solid var(--line); padding-bottom:.5rem; margin-bottom:1rem;}
+main > section > p.intro{color:var(--ink-soft); max-width:680px; margin-bottom:1.4rem;}
+.cards{display:grid; gap:1.1rem;}
+.card{
+  background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius);
+  padding:1.3rem 1.4rem 1.4rem; position:relative;
+}
+.card > .tierbar{position:absolute; left:0; top:0; bottom:0; width:4px; border-radius:var(--radius) 0 0 var(--radius);}
+.t0 .tierbar{background:var(--line);}
+.t1 .tierbar{background:var(--moss-deep);}
+.t2 .tierbar{background:var(--moss);}
+.t3 .tierbar{background:var(--ember);}
+.card .head{display:flex; align-items:baseline; justify-content:space-between; gap:.8rem; flex-wrap:wrap; margin-bottom:.15rem;}
+.card h3{font-size:1.22rem; margin:0;}
+.card .aka{font-size:.8rem; color:var(--ink-soft); font-style:italic; margin-bottom:.6rem;}
+.tags{display:flex; gap:.4rem; flex-wrap:wrap; align-items:center;}
+.tag{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; padding:.18rem .5rem; border-radius:2px; border:1px solid var(--line); color:var(--ink-soft); white-space:nowrap;}
+.tag.tier0{border-color:var(--line); color:var(--ink-soft);}
+.tag.tier1{border-color:var(--moss-deep); color:var(--moss-deep);}
+.tag.tier2{border-color:var(--moss); color:var(--moss);}
+.tag.tier3{border-color:var(--ember); color:var(--ember);}
+:root[data-theme="dark"] .tag.tier1, @media (prefers-color-scheme:dark){.tag.tier1{color:var(--moss-bright); border-color:var(--moss-deep);}}
+.field{margin-top:.85rem;}
+.field > .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); margin-bottom:.3rem;}
+.field p, .field ul{margin:0; font-size:.94rem;}
+.field ul{padding-left:1.1rem;}
+.field li{margin-bottom:.25rem;}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:1.4rem 1.6rem;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+.linklist{display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.2rem;}
+.linklist a{font-size:.82rem; background:var(--stone-sunken); border:1px solid var(--line); padding:.12rem .5rem; border-radius:12px; text-decoration:none;}
+.linklist a:hover{border-color:var(--moss);}
+.callout{border-left:3px solid var(--ember); background:var(--stone-sunken); padding:.7rem .9rem; border-radius:0 var(--radius) var(--radius) 0; font-size:.9rem; margin-top:.9rem;}
+.callout .fl{color:var(--ember);}
+footer{max-width:920px; margin:0 auto; padding:2rem 1.4rem 4rem; color:var(--ink-soft); font-size:.85rem; border-top:1px solid var(--line);}
+hr.rule{border:none; border-top:1px solid var(--line); margin:2.4rem 0;}
+</style>
+
+<div class="topbar">
+  <span class="mark"></span><strong>The Practice</strong>
+  <nav>
+    <a href="index-fr.html">Accueil</a>
+    <a href="#" class="current">Bibliothèque d'exercices</a>
+    <a href="month1-fr.html">Mois 1</a>
+    <a href="month2-fr.html">Mois 2</a>
+    <a href="month3-fr.html">Mois 3</a>
+  </nav>
+  <div class="langsw" aria-label="Langue">
+    <a href="exercises.html">EN</a>
+    <a href="exercises-fr.html" class="lang-current">FR</a>
+    <a href="exercises-de.html">DE</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Référence · Bibliothèque de compétences</div>
+  <h1>Bibliothèque d'exercices &amp; de compétences</h1>
+  <p class="lede">Chaque position, transition et compétence utilisée dans le programme de 12 semaines, avec le raisonnement qui la sous-tend : ce qu'elle développe, ce qu'elle exige au préalable, ce qu'elle permet d'ouvrir ensuite, et comment savoir que vous l'avez réellement acquise plutôt que simplement exécutée.</p>
+</div>
+
+<div class="wrap">
+<nav class="rail" aria-label="Sommaire de la bibliothèque">
+  <h3>Niveaux</h3>
+  <div class="legend">
+    <div class="lg-item"><span class="sw" style="background:var(--line)"></span>Niveau 0 — Primitives</div>
+    <div class="lg-item"><span class="sw" style="background:var(--moss-deep)"></span>Niveau 1 — Fondations</div>
+    <div class="lg-item"><span class="sw" style="background:var(--moss)"></span>Niveau 2 — Locomotion</div>
+    <div class="lg-item"><span class="sw" style="background:var(--ember)"></span>Niveau 3 — Intégration</div>
+  </div>
+  <h3 style="margin-top:1.6rem;">Catégories</h3>
+  <ul>
+    <li><a href="#breath">Respiration &amp; système nerveux</a></li>
+    <li><a href="#cars">Préparation articulaire (CARs)</a></li>
+    <li><a href="#core">Gainage &amp; contrôle du tronc</a></li>
+    <li><a href="#ground">Positions au sol</a></li>
+    <li><a href="#locomotion">Locomotion animale</a></li>
+    <li><a href="#transitions">Roulades &amp; transitions</a></li>
+    <li><a href="#balance">Équilibre</a></li>
+    <li><a href="#inversion">Inversion &amp; Handstand</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<section id="breath">
+<h2>Respiration &amp; système nerveux</h2>
+<p class="intro">Chaque séance commence ici. La respiration n'est pas une formalité d'échauffement — c'est le régulateur qui décide si le système nerveux est disponible ou non pour la motricité fine. Une respiration précipitée et superficielle maintient le système en tension prête à l'effort ; une respiration nasale lente permet aux stabilisateurs de s'activer sans tension globale.</p>
+<div class="cards">
+
+<div class="card t0" id="diaphragmatic-breathing">
+<div class="tierbar"></div>
+<div class="head"><h3>Respiration diaphragmatique (360°)</h3><div class="tags"><span class="tag tier0">Niveau 0</span></div></div>
+<div class="aka">aussi appelée respiration abdominale, respiration 3D</div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Mise en place &amp; exécution</div><ul>
+<li>Allongez-vous sur le dos, genoux fléchis, pieds à plat, ou asseyez-vous droit en tailleur.</li>
+<li>Mains sur les côtes basses, pouces vers la colonne, doigts vers le nombril.</li>
+<li>Inspirez par le nez, en élargissant les côtes latéralement et en gonflant le ventre vers l'avant — pas seulement en soulevant la cage thoracique.</li>
+<li>Expirez lentement par la bouche, en sentant les côtes et le ventre revenir vers le bas et l'intérieur.</li>
+<li>Inspiration de 4 à 6 secondes, expiration de 6 à 8 secondes. 8 à 12 respirations.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est introduit en premier</div><p>Le diaphragme est à la fois un muscle respiratoire et un stabilisateur du tronc. Avant de pouvoir entraîner honnêtement un maintien statique (Hollow, Arch, Beast), il faut un schéma respiratoire qui ne s'effondre pas sous la tension du tronc. C'est le mécanisme lui-même, pas un supplément de relaxation.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La dissociation costo-diaphragmatique par rapport à la respiration accessoire cervicale ; le passage en mode parasympathique avant le travail technique ; une base pour gainer sans bloquer la respiration.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Respiration à dominante thoracique (les épaules se soulèvent).</li><li>Contracter le ventre au lieu de le laisser s'expandre.</li><li>Précipiter l'expiration.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>10 respirations lentes, les côtes s'élargissent latéralement et le ventre se gonfle vers l'avant à chaque inspiration, les épaules restent calmes, aucun blocage respiratoire pour « gainer ».</p></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="cars">
+<h2>Préparation articulaire — Controlled Articular Rotations (CARs)</h2>
+<p class="intro">Directement emprunté à la Functional Range Conditioning (FRC). Un CAR est la rotation la plus lente et la plus contrôlée possible d'une articulation sur toute son amplitude disponible, générée entièrement par vos propres muscles — sans élan, sans aide de la main. C'est à la fois un échauffement, une évaluation de l'amplitude active et, sur plusieurs mois, un outil d'entraînement de la mobilité articulaire. Si une articulation est raide ou tremblante à un endroit de l'arc de mouvement, c'est une information diagnostique, pas un défaut à ignorer en accélérant.</p>
+<div class="cards">
+
+<div class="card t0" id="cars-general">
+<div class="tierbar"></div>
+<div class="head"><h3>CARs — Méthode générale (cou, épaule, hanche, colonne)</h3><div class="tags"><span class="tag tier0">Niveau 0</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li><strong>Cou :</strong> assis bien droit, tracez le plus grand cercle fluide que votre menton puisse dessiner, avant-côté-arrière-côté, dans les deux sens, à environ 60% de l'amplitude maximale au début.</li>
+<li><strong>Épaule :</strong> debout, bras tendu, dessinez le plus grand cercle possible depuis l'omoplate, colonne droite et immobile (ne vous penchez pas pour tricher sur l'amplitude), dans les deux sens.</li>
+<li><strong>Hanche :</strong> en appui sur une jambe (prenez légèrement appui sur un mur si nécessaire), levez le genou libre et tracez le plus grand cercle que la hanche puisse faire — flexion → abduction → extension → adduction — bassin stable.</li>
+<li><strong>Colonne :</strong> à quatre pattes, Cat-Cow (chat-vache) en segmentant queue → lombaires → thoraciques → cou, vertèbre par vertèbre, puis dans l'autre sens.</li>
+<li>1 à 2 répétitions lentes par articulation et par sens. La vitesse d'une trotteuse d'horloge, pas un balancement d'échauffement.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est fait en premier, à chaque séance</div><p>Vous ne pouvez pas charger en sécurité une amplitude que vous ne contrôlez pas activement. Les CARs permettent de déterminer quelles amplitudes sont « acquises » (fortes et contrôlées) et lesquelles sont simplement « visitées » (souples mais faibles, ou raides et évitées), avant que tout travail de locomotion ou de compétence ne demande à l'articulation de travailler dans cette amplitude.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>L'amplitude de mouvement active (AROM), la proprioception articulaire, la détection précoce des asymétries gauche/droite, une carte ressentie de « où je suis raide » par rapport à « où je suis faible ».</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Utiliser l'élan au lieu du contrôle musculaire.</li><li>Laisser la colonne ou le bassin bouger pour tricher sur l'amplitude (par exemple, pencher le tronc pendant un CAR d'épaule).</li><li>Aller trop vite — les CARs sont lents par nature.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Cercle complet, dans les deux sens, des deux côtés, sans compensation ailleurs et sans accroc ni tremblement à un point précis (un « point bloqué » signifie qu'il faut continuer à entraîner exactement cet arc, pas l'éviter).</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#deep-squat">Deep Squat</a><a href="#beast">Beast</a><a href="#shinbox">Shin Box</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t0" id="wrist-conditioning">
+<div class="tierbar"></div>
+<div class="head"><h3>Renforcement du poignet</h3><div class="tags"><span class="tag tier0">Niveau 0 → 3</span></div></div>
+<div class="aka">séquence de charge progressive, entraînée à chaque séance</div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Étape 1 — CARs :</strong> doigts entrelacés ou poing fermé, cercles lents en amplitude maximale dans les deux sens.</li>
+<li><strong>Étape 2 — Étirement en prière et prière inversée :</strong> paumes jointes doigts vers le haut, puis doigts vers le bas, maintiens statiques doux, 20 à 30 s.</li>
+<li><strong>Étape 3 — Bascules à quatre pattes :</strong> mains à plat au sol, doigts écartés, faites basculer le poids d'avant en arrière à travers les poignets, genoux au sol, lentement et par petites amplitudes au début.</li>
+<li><strong>Étape 4 — Maintiens en charge :</strong> maintien statique en charge à quatre pattes, puis transfert du poids d'un côté à l'autre (prépare directement le Beast).</li>
+<li><strong>Étape 5 — Variantes sur bouts des doigts et articulations :</strong> introduites une fois que la charge à main plate est indolore et contrôlée (à partir du Mois 2).</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est important</div><p>Presque toutes les compétences de locomotion au sol et d'inversion de ce programme (Beast, Ape, Crab, préparation au Headstand, préparation au Wall Handstand) chargent le poignet en extension sous le poids du corps. Des poignets non entraînés sont la cause la plus fréquente de blocage ou de gêne chez les débutants en entraînement de type Animal Flow. Ce travail est fait de manière proactive, pas après l'apparition d'une douleur.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La tolérance du poignet à l'extension sous charge, la capacité tissulaire à supporter du poids, la proprioception de l'avant-bras et de la main.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Passer directement à la charge complète à quatre pattes avant que les CARs et les étirements ne soient confortables.</li><li>S'effondrer au niveau du pli du poignet au lieu de répartir la charge sur toute la main.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>2 minutes cumulées de mise en charge à main plate (sur plusieurs séries) sans douleur et avec un alignement stable du poignet → vous autorise à charger librement le Beast et l'Ape.</p></div>
+<div class="callout"><div class="fl">Régression</div>Réduisez la charge en gardant plus de poids sur les genoux/pieds, ou travaillez temporairement sur les poings/articulations pendant que l'amplitude d'extension progresse.</div>
+</div>
+</div>
+</div>
+
+<div class="card t0" id="ankle-conditioning">
+<div class="tierbar"></div>
+<div class="head"><h3>Renforcement de la cheville</h3><div class="tags"><span class="tag tier0">Niveau 0 → 2</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Étape 1 — CARs de la cheville :</strong> assis ou à genoux, levez le pied, tracez le plus grand cercle possible depuis la cheville seule, dans les deux sens.</li>
+<li><strong>Étape 2 — Bascule en flexion dorsale chargée :</strong> à genoux dressé, un pied à plat devant, faites basculer le genou au-delà des orteils puis en arrière, le talon reste au sol le plus longtemps possible.</li>
+<li><strong>Étape 3 — Charge de la cheville en Deep Squat :</strong> en Deep Squat actif complet, faites doucement basculer les genoux d'un côté à l'autre pour charger la flexion dorsale en fin d'amplitude (prépare directement l'entrée Deep Squat).</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est important</div><p>Le Deep Squat, l'Ape et l'Ape en déplacement exigent tous une flexion dorsale de cheville importante. La plupart des adultes sédentarisés perdent cette amplitude en premier et compensent en arrondissant le bas du dos ou en soulevant les talons — ce travail de cheville supprime le véritable goulot d'étranglement au lieu de forcer une fausse amplitude ailleurs.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>L'amplitude active de flexion dorsale de la cheville, la proprioception du pied et de la cheville, la tolérance à la charge en fin d'amplitude.</p></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Le genou peut avancer visiblement au-delà des orteils dans une bascule en fente, talon collé au sol, des deux côtés, sans douleur.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#deep-squat">Deep Squat</a><a href="#ape">Ape</a></div></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="core">
+<h2>Gainage &amp; contrôle du tronc</h2>
+<p class="intro">Ici, la « force du tronc » désigne la capacité du tronc à résister à un mouvement non désiré et à transmettre la force entre le haut et le bas du corps — le cadre stable qui permet aux membres de bouger librement. Hollow et Arch sont les deux formes à partir desquelles presque toutes les compétences gymniques et de locomotion animale de ce programme sont construites.</p>
+<div class="cards">
+
+<div class="card t1" id="hollow-body">
+<div class="tierbar"></div>
+<div class="head"><h3>Hollow Body Hold</h3><div class="tags"><span class="tag tier1">Niveau 1</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Régression :</strong> allongé sur le dos, genoux fléchis, pieds au sol, bas du dos plaqué au sol, bras tendus vers les genoux — un « dish » sans décollé.</li>
+<li><strong>Base :</strong> allongé sur le dos, genoux fléchis à 90°, tibias parallèles au sol, bas du dos collé au sol, épaules légèrement décollées, bras longs le long des oreilles.</li>
+<li><strong>Progression :</strong> tendez une jambe, puis les deux, puis ajoutez de lents balancements en Hollow (petits balancements contrôlés le long de la courbe de la colonne).</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est fondamental</div><p>Le Hollow Body est la forme sous-jacente au Beast Crawl, à l'Ape, au Crab, au Headstand et au Wall Handstand — partout où la colonne doit résister à l'extension sous charge. Il est introduit en semaine 1 car presque toutes les compétences suivantes emprunteront exactement cette forme de tronc.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>L'endurance de la chaîne antérieure, le contrôle lombo-pelvien, la respiration sous tension du tronc (c'est pourquoi le travail respiratoire le précède).</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Le bas du dos se cambre et décolle du sol (perte de la forme plutôt que maintien).</li><li>Bloquer la respiration au lieu de respirer pendant le maintien.</li><li>Le cou tire vers l'avant au lieu de laisser le tronc faire le travail.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Maintien de 30 s, position bras et jambes tendus, respiration continue, bas du dos en contact avec le sol tout au long.</p></div>
+<div class="field"><div class="fl">Signes de progression</div><p>Le maintien devient calme (sans trembler) à 20 s ou plus → ajoutez l'extension de jambe, puis les balancements.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#beast-crawl">Beast Crawl</a><a href="#headstand-prep">Préparation au Headstand</a><a href="#wall-handstand">Préparation au Wall Handstand</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t1" id="arch-body">
+<div class="tierbar"></div>
+<div class="head"><h3>Arch Body Hold</h3><div class="tags"><span class="tag tier1">Niveau 1</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Base :</strong> allongé sur le ventre, bras longs au-dessus de la tête, soulevez légèrement la poitrine et les cuisses du sol simultanément, regard vers le sol (cou neutre), contractez doucement les fessiers.</li>
+<li><strong>Progression :</strong> prolongez le maintien, puis ajoutez de lents balancements en Arch (bascule douce d'avant en arrière sur le ventre, précurseur de la roulade et du Scorpion).</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est fondamental</div><p>Arch est le miroir de Hollow — le contrôle de la chaîne postérieure en extension. Il est à la base du Scorpion, des transitions en appui dorsal et des schémas de roulade, et équilibre un programme qui serait sinon dominé par la flexion.</p></div>
+</div>
+<div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>L'endurance de la chaîne postérieure (érecteurs spinaux, fessiers), le contrôle en extension, un contrepoids à un entraînement dominé par le Hollow.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Tirer la tête en arrière pour « monter plus haut » au lieu de garder le cou neutre.</li><li>Bloquer une grande respiration au lieu de respirer en continu.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Maintien de 30 s, poitrine et cuisses décollées, cou neutre, respiration continue.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#scorpion">Scorpion</a><a href="#rolling">Rolling Patterns</a></div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card t0" id="dead-bug">
+<div class="tierbar"></div>
+<div class="head"><h3>Dead Bug &amp; Bird-Dog</h3><div class="tags"><span class="tag tier0">Niveau 0</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li><strong>Dead Bug :</strong> allongé sur le dos, hanches et genoux à 90°, bas du dos plaqué au sol ; tendez lentement un bras au-dessus de la tête et la jambe opposée, en gardant le bas du dos collé au sol, revenez, alternez.</li>
+<li><strong>Bird-Dog :</strong> à quatre pattes, tendez un bras vers l'avant et la jambe opposée vers l'arrière sans laisser le bassin tourner ni le bas du dos s'affaisser.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est inclus</div><p>Ce sont les exercices de transition entre un maintien statique en Hollow/Arch et un membre en mouvement — le tronc reste immobile tandis que les membres bougent indépendamment. Cette compétence (la dissociation) est exactement ce qu'exigent des schémas de locomotion comme le Beast Crawl.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>Le contrôle anti-rotation et anti-extension du tronc pendant que les membres bougent ; la coordination contralatérale.</p></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>8 répétitions lentes par côté, sans bascule du bassin, sans que le bas du dos ne décolle du sol, respiration continue.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#beast-crawl">Beast Crawl</a><a href="#get-up">Get-Up</a></div></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="ground">
+<h2>Positions au sol &amp; mobilité active</h2>
+<p class="intro">Ce sont les formes « base de repli » de toute la pratique — des positions dans lesquelles vous devriez pouvoir vous reposer, respirer, et desquelles vous devriez pouvoir sortir dans n'importe quelle direction. Le Movement Culture considère le Deep Squat et la position assise en tailleur au sol comme des positions humaines de base, et non comme de simples étirements.</p>
+<div class="cards">
+
+<div class="card t1" id="deep-squat">
+<div class="tierbar"></div>
+<div class="head"><h3>Deep Squat (actif)</h3><div class="tags"><span class="tag tier1">Niveau 1</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Régression :</strong> squat avec talons surélevés (petite serviette roulée ou livre sous les talons), mains tenant un mur ou un cadre de porte pour le contrepoids.</li>
+<li><strong>Base :</strong> pieds à peu près à la largeur des hanches, orteils légèrement tournés vers l'extérieur, descendez les hanches entre les talons, talons à plat, poitrine haute, les coudes peuvent s'accrocher à l'intérieur des genoux pour ouvrir les hanches.</li>
+<li><strong>Progression :</strong> retirez l'appui des mains, puis ajoutez de légers transferts de poids (balancer les genoux d'un côté à l'autre, déplacer le poids vers l'avant sur les orteils puis vers l'arrière sur les talons), puis les transitions depuis et vers la position debout sans les mains.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est la priorité absolue</div><p>Le Deep Squat est la forme la plus répétée de tout ce programme — c'est le point d'entrée et de sortie de l'Ape, la base assise du Shin Box, et un test de mobilité pour tout le corps (cheville, hanche, colonne) en une seule position. Presque tout le reste du Mois 1 est organisé autour de la construction d'un Deep Squat non assisté.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La flexion dorsale de la cheville, la flexion de hanche sous charge, le contrôle lombaire en flexion, l'aisance à passer du temps près du sol.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Les talons se soulèvent du sol (goulot d'étranglement de l'amplitude de cheville — régressez avec un support sous les talons, continuez les CARs de cheville).</li><li>Le bas du dos s'arrondit fortement et s'effondre au lieu de rester long.</li><li>Bloquer la respiration au lieu de respirer en restant assis dans la position.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>2 minutes assis dans un Deep Squat non assisté, talons au sol, respiration normale, capable de transférer le poids et de lever une main du sol sans basculer en arrière.</p></div>
+<div class="field"><div class="fl">Signes de progression</div><p>Capable de tenir 60 s ou plus sans les mains → commencez l'Ape (squat-to-reach).</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#ape">Ape</a><a href="#shinbox">Shin Box</a><a href="#get-up">Get-Up</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t1" id="shinbox">
+<div class="tierbar"></div>
+<div class="head"><h3>Shin Box / 90-90</h3><div class="tags"><span class="tag tier1">Niveau 1</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li>Asseyez-vous, jambe avant fléchie à 90° devant vous, jambe arrière fléchie à 90° sur le côté/derrière — genoux et hanches proches de 90° des deux côtés.</li>
+<li>Maintenez d'abord la position statique, colonne droite, poids égal sur les deux ischions.</li>
+<li><strong>Le switch :</strong> poussez à travers le pied avant et le genou arrière pour faire pivoter les deux jambes vers le 90-90 en miroir de l'autre côté, en restant bas et contrôlé, sans les mains.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est introduit en même temps que le squat</div><p>Le Shin Box entraîne la rotation interne et externe de la hanche — l'amplitude que le Deep Squat ne touche pas. Ensemble, le squat et le Shin Box couvrent presque toute l'amplitude fonctionnelle dont les hanches ont besoin pour la locomotion au sol (l'Ape, le Sit-Through et le Get-Up empruntent tous à cette rotation).</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>L'amplitude active de rotation interne/externe de hanche, l'équilibre assis, le schéma spécifique de « décharge et pivot par les hanches » utilisé dans le Sit-Through et le Get-Up.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Utiliser les mains pour forcer le switch au lieu des hanches.</li><li>Se pencher loin en arrière pour créer de l'élan plutôt que de tourner activement.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>5 switches propres dans chaque sens, sans les mains, sans perdre la posture droite.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#sit-through">Sit-Through</a><a href="#get-up">Get-Up</a></div></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="locomotion">
+<h2>Schémas de locomotion animale</h2>
+<p class="intro">Le cœur Animal Flow / MovNat du programme. Ces schémas chargent les épaules et les hanches de manière contralatérale, près du sol, à faible risque — c'est là que le « contrôle du corps sous charge » s'entraîne réellement, bien avant toute compétence avancée.</p>
+<div class="cards">
+
+<div class="card t1" id="beast">
+<div class="tierbar"></div>
+<div class="head"><h3>Beast (maintien statique → Loaded Beast)</h3><div class="tags"><span class="tag tier1">Niveau 1 → 2</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Base :</strong> à quatre pattes, mains sous les épaules, genoux sous les hanches, décollez les genoux d'environ 2 à 5 cm du sol, colonne longue (ni cambrée ni arrondie), poids équilibré entre les mains et les orteils.</li>
+<li><strong>Loaded Beast :</strong> depuis le maintien, transférez lentement le poids vers l'avant sur les mains, puis vers l'arrière vers les talons, puis d'un côté à l'autre — les genoux restant juste au-dessus du sol tout le long.</li>
+<li><strong>Beast Reach :</strong> depuis le maintien chargé, tendez une main vers l'avant en maintenant l'appui sur trois points.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>Le Beast est la position de base du Beast Crawl et la forme d'entrée/sortie du Sit-Through et du Scorpion. Il est d'abord introduit comme maintien statique pour établir la stabilité de l'épaule et de la hanche avant que le crawl ne demande aux membres de bouger.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La stabilité de l'épaule sous charge (contrôle scapulaire), le contrôle des fléchisseurs/extenseurs de hanche, la tension globale du corps sans raideur, la tolérance à la charge du poignet.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Les hanches qui piquent vers le haut (le poids qui s'échappe vers l'arrière) ou qui s'affaissent (perte du dos plat).</li><li>Verrouiller les coudes au lieu de garder une légère flexion active.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Maintien statique de 30 s avec les genoux suspendus, colonne plate, puis 10 transferts de poids propres en Loaded Beast sans que les genoux ne touchent le sol.</p></div>
+<div class="field"><div class="fl">Signes de progression</div><p>Le Loaded Beast est stable et sans précipitation → prêt pour le Beast Crawl.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#beast-crawl">Beast Crawl</a><a href="#sit-through">Sit-Through</a><a href="#scorpion">Scorpion</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t1" id="ape">
+<div class="tierbar"></div>
+<div class="head"><h3>Ape (Squat-Reach) → Traveling Ape</h3><div class="tags"><span class="tag tier1">Niveau 1 → 2</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Base :</strong> depuis un Deep Squat, placez les deux mains au sol à largeur d'épaules devant vous, puis transférez le poids dans les mains et faites flotter brièvement les hanches/pieds, en reposant les pieds dans un squat légèrement en avant ou en arrière du point de départ. C'est un « saut », pas un pas.</li>
+<li><strong>Traveling Ape :</strong> enchaînez plusieurs sauts dans une direction, en restant bas tout le temps, sans jamais remonter en position debout entre les répétitions.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>L'Ape, c'est le Deep Squat mis en mouvement — il exige tout ce que le squat a entraîné (amplitude de cheville/hanche) plus la charge du poignet entraînée séparément, combinés en un seul transfert de poids engagé. Il est volontairement retardé jusqu'à ce que les deux prérequis soient solides, pour que le mouvement soit coordonné, pas seulement courageux.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>Le transfert de poids engagé entre les mains et les pieds, le fait de rester bas pendant une transition, le timing spatial et coordinatif.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Remonter à hauteur debout entre les sauts au lieu de rester bas (« popping up » va à l'encontre du but).</li><li>Atterrir sur les talons en premier au lieu de tout le pied, ou avoir les mains trop loin des pieds.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>5 sauts sur place en restant bas tout le long ; puis 8 sauts ou plus de Traveling Ape couvrant du terrain dans une direction, atterrissages contrôlés.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#beast-crawl">Beast Crawl</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t2" id="beast-crawl">
+<div class="tierbar"></div>
+<div class="head"><h3>Beast Crawl</h3><div class="tags"><span class="tag tier2">Niveau 2</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li>Depuis le Loaded Beast, avancez une main et le genou opposé ensemble (contralatéral), puis l'autre main et le genou opposé — les genoux restant bas, les hanches de niveau, sans balancement.</li>
+<li>Bougez suffisamment lentement pour pouvoir vous arrêter et tenir la position à tout moment.</li>
+<li>Progressez du déplacement avant uniquement, vers l'arrière, puis vers le crawl latéral.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade (Mois 2)</div><p>C'est l'aboutissement du Beast + Loaded Beast + Dead Bug/Bird-Dog : le mouvement contralatéral des membres sous charge, près du sol, est l'un des plus anciens schémas de coordination croisée disponibles et il est largement utilisé en Animal Flow et en MovNat. Il est retenu jusqu'à ce que les versions statique et à transfert de poids soient solides, pour que le crawl soit fluide plutôt que saccadé.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La coordination contralatérale, la stabilité soutenue de l'épaule/hanche sous charge dynamique, la conscience spatiale en se déplaçant à quatre pattes.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Les hanches qui montent plus haut que les épaules (retour vers un « bear crawl » au lieu de rester bas).</li><li>Bouger les membres du même côté ensemble au lieu de bouger contralatéralement.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>10 pas contralatéraux contrôlés vers l'avant et 10 vers l'arrière, les hanches restant au niveau des épaules ou plus bas tout le long.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#sit-through">Sit-Through</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t1" id="crab">
+<div class="tierbar"></div>
+<div class="head"><h3>Crab (maintien statique → Crab Walk)</h3><div class="tags"><span class="tag tier1">Niveau 1 → 2</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Base :</strong> asseyez-vous, mains derrière les hanches, doigts pointant vers les pieds (ou vers l'avant, selon l'angle de poignet le plus confortable au début), genoux fléchis, levez les hanches pour que le tronc soit à peu près parallèle au sol, tête neutre (ne la laissez pas tomber en arrière).</li>
+<li><strong>Crab Walk :</strong> depuis le maintien, avancez une main et le pied opposé ensemble, de manière contralatérale, en gardant les hanches levées tout le long.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>Le Crab est le miroir postérieur du Beast — extension de l'épaule et extension de la hanche sous charge, orienté dans la direction opposée. Ensemble, le Beast et le Crab offrent aux épaules et aux hanches une charge équilibrée à la fois en position dominée par la flexion et par l'extension, et tous les deux alimentent directement le Sit-Through, qui fait le pont entre eux.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La force et le contrôle en extension de l'épaule, l'extension de la hanche sous charge, l'endurance de la chaîne postérieure, la tolérance du poignet dans un angle de charge différent du Beast.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Laisser les hanches s'affaisser vers le sol entre les pas.</li><li>Laisser tomber la tête en arrière au lieu de garder le cou neutre.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Maintien statique de 20 s, hanches de niveau ; puis 10 pas contralatéraux de Crab Walk sans que les hanches ne descendent.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#sit-through">Sit-Through</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t2" id="sit-through">
+<div class="tierbar"></div>
+<div class="head"><h3>Sit-Through</h3><div class="tags"><span class="tag tier2">Niveau 2</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li>Depuis le Beast, tendez une main en diagonale vers l'avant tandis que la jambe opposée passe dessous et de l'autre côté, en faisant tourner les hanches pour finir face vers le haut dans une position de type Crab de ce côté.</li>
+<li>Refaites le même chemin en sens inverse pour revenir au Beast.</li>
+<li>Bougez lentement au début — c'est un exercice de rotation du tronc déguisé en transition.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>Le Sit-Through est littéralement le Beast et le Crab connectés — il ne peut pas être entraîné honnêtement avant que ces deux maintiens ne soient stables, c'est pourquoi il se situe au début du travail d'« intégration » du Mois 2. C'est aussi le prérequis direct du Scorpion.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La rotation du tronc sous charge, la mobilité de la hanche dans la transition, la coordination des quatre membres à travers une base d'appui changeante.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Laisser la hanche arrière s'effondrer au sol au lieu de la contrôler.</li><li>Précipiter la rotation au lieu de contrôler le point médian.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>5 répétitions contrôlées de chaque côté, Beast → Sit-Through → retour au Beast, sans hanche qui tombe, tempo régulier dans les deux sens.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#scorpion">Scorpion</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t3" id="scorpion">
+<div class="tierbar"></div>
+<div class="head"><h3>Scorpion</h3><div class="tags"><span class="tag tier3">Niveau 3</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li>Depuis la position ventrale (base Arch Body), amenez un pied vers le haut et en diagonale vers la main opposée, en tournant à travers la colonne et la hanche, tandis que les deux mains (ou les avant-bras au début) restent au sol pour l'appui.</li>
+<li>Revenez avec contrôle, alternez les côtés.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est en dernier</div><p>Le Scorpion combine le contrôle en extension de l'Arch Body avec la mobilité rotationnelle de la hanche/colonne entraînée dans le Sit-Through et les CARs spinaux. C'est la compétence d'« intégration » la plus claire du programme — une démonstration directe de tout ce qui a été entraîné depuis la semaine 1, ce qui explique qu'elle soit réservée au Mois 3.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La rotation thoraco-lombaire sous charge en extension, la mobilité de la hanche en position tournée/étendue, la stabilité de l'épaule qui soutient la rotation.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Forcer l'amplitude avec un coup de pied saccadé au lieu d'une extension contrôlée.</li><li>Laisser l'épaule d'appui s'effondrer.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>5 répétitions lentes et contrôlées par côté, le pied s'approchant visiblement de la main opposée, sans saccade, bras d'appui stables.</p></div>
+<div class="field"><div class="fl">Prérequis</div><div class="linklist"><a href="#arch-body">Arch Body</a><a href="#sit-through">Sit-Through</a><a href="#cars-general">CARs spinaux</a></div></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="transitions">
+<h2>Transitions au sol &amp; roulades</h2>
+<p class="intro">La capacité à passer de la position allongée à assise, à genoux et debout de manière fluide — et à tomber ou rouler sans se raidir — est l'une des qualités les plus importantes fonctionnellement et les plus négligées dans l'entraînement moderne du mouvement. Elle est entraînée délibérément, et non laissée au hasard.</p>
+<div class="cards">
+
+<div class="card t1" id="rocking">
+<div class="tierbar"></div>
+<div class="head"><h3>Rocking (Log Roll &amp; Fetal Rock)</h3><div class="tags"><span class="tag tier1">Niveau 1</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li><strong>Log Roll :</strong> allongé complètement étendu, bras au-dessus de la tête, roulez tout le corps comme un seul bloc d'un bout à l'autre du sol, en restant long.</li>
+<li><strong>Fetal Rock :</strong> enroulez-vous en boule (genoux vers la poitrine, bras autour des tibias, menton rentré) et balancez-vous doucement le long de la colonne, d'avant en arrière.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est introduit tôt</div><p>C'est la manière la moins risquée de réhabituer la colonne à rouler au sol et de développer l'aisance avec la tête qui se déplace hors de l'axe central — un précurseur direct des véritables schémas de roulade et de l'aisance générale au sol.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>Le contrôle segmentaire de la colonne, l'aisance avec la tête/les yeux passant brièvement par des positions quasi inversées, la familiarité vestibulaire avec la roulade.</p></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Fetal Rock : 10 balancements fluides, menton rentré, sans saccade ; Log Roll : 3 roulades du corps entier dans chaque sens en restant droit.</p></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#rolling">Rolling Patterns</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t2" id="rolling">
+<div class="tierbar"></div>
+<div class="head"><h3>Techniques de roulade (progression de la roulade à l'épaule)</h3><div class="tags"><span class="tag tier2">Niveau 2 → 3</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Étape 1 — Bascule vers l'épaule :</strong> depuis un Deep Squat, posez une main au sol, rentrez le menton vers la poitrine, et basculez en diagonale vers l'arrière sur l'omoplate opposée (jamais sur le sommet de la tête), puis rebasculez vers le squat.</li>
+<li><strong>Étape 2 — Roulade continue à l'épaule :</strong> ajoutez suffisamment d'élan pour poursuivre la roulade en diagonale sur le dos et vous relever debout en un seul mouvement fluide, en évitant toujours tout contact avec la tête/le cou.</li>
+<li><strong>Étape 3 (Mois 3, optionnel) :</strong> enchaînez la roulade avec un pas ou avec l'Ape, en la traitant comme un moyen d'absorber une chute ou de changer de niveau plutôt que comme une figure de démonstration.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>Ceci s'inspire de la « roulade à l'épaule » du judo/parkour plutôt que de la roulade avant gymnique, précisément parce qu'elle ne charge jamais la colonne cervicale (contrairement à une roulade avant traditionnelle sur la tête/le cou), ce qui en fait un point d'entrée plus sûr pour les adultes débutants tout en développant la même compétence de chute/roulade.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La mécanique sécurisée de la chute/roulade, l'orientation spatiale en position quasi inversée, la confiance à déplacer la tête hors d'un axe vertical fixe, la coordination de l'enroulement.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Rouler sur le sommet de la tête/le cou au lieu de la ligne diagonale épaule-hanche — arrêtez immédiatement et régressez si cela se produit.</li><li>Relever le menton en plein milieu de la roulade.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>5 roulades continues dans chaque sens sur une surface suffisamment souple, menton rentré tout le long, se relevant debout et droit à la fin, sans charge sur le cou.</p></div>
+<div class="field"><div class="fl">Prérequis</div><div class="linklist"><a href="#rocking">Rocking</a><a href="#hollow-body">Hollow Body</a><a href="#arch-body">Arch Body</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t2" id="get-up">
+<div class="tierbar"></div>
+<div class="head"><h3>Get-Up depuis le sol</h3><div class="tags"><span class="tag tier2">Niveau 2 → 3</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Étape 1 — Get-Up à genou mi-hauteur :</strong> depuis la position allongée, roulez sur le côté, passez en position assise, posez un pied à plat devant vous dans une fente à genou mi-hauteur, puis relevez-vous — en utilisant une main au sol pour l'appui si nécessaire.</li>
+<li><strong>Étape 2 — Get-Up sans les mains :</strong> retirez la main d'appui, en vous appuyant sur la mobilité du Deep Squat et du Shin Box entraînée précédemment.</li>
+<li><strong>Étape 3 — Get-Up multidirectionnel :</strong> pratiquez le fait de vous relever en menant avec l'un ou l'autre côté, et depuis différentes orientations de départ allongées (face vers le haut, face vers le bas).</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>C'est la philosophie centrale de MovNat résumée en un seul mouvement : une compétence concrète (se relever du sol de manière contrôlée à tout âge) construite explicitement à partir de compétences prérequises — le Deep Squat, la rotation du Shin Box et le contrôle du tronc — plutôt qu'entraînée comme un exercice isolé.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>L'enchaînement intégré de tout le corps, la mobilité de hanche appliquée de façon fonctionnelle, la confiance et les options pour se relever du sol sans dépendre du mobilier.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Utiliser l'élan/des mouvements désordonnés au lieu d'une séquence contrôlée et reproductible.</li><li>Toujours mener avec le même côté — pratiquez les deux.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>5 répétitions propres par côté sans appui des mains, fluides et sans précipitation, depuis au moins deux orientations de départ différentes.</p></div>
+<div class="field"><div class="fl">Prérequis</div><div class="linklist"><a href="#deep-squat">Deep Squat</a><a href="#shinbox">Shin Box</a><a href="#dead-bug">Dead Bug / Bird-Dog</a></div></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="balance">
+<h2>Équilibre</h2>
+<p class="intro">L'équilibre est entraîné comme une progression de contraintes (une base stable → une base plus petite → la vision retirée → une surface instable), et non comme un exercice unique. Chaque étape n'est ajoutée qu'une fois la précédente devenue banale.</p>
+<div class="cards">
+
+<div class="card t1" id="single-leg-balance">
+<div class="tierbar"></div>
+<div class="head"><h3>Progression de l'équilibre sur une jambe</h3><div class="tags"><span class="tag tier1">Niveau 1 → 3</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Étape 1 :</strong> appui statique sur une jambe, yeux ouverts, 30 à 45 s par côté.</li>
+<li><strong>Étape 2 :</strong> ajoutez de lents mouvements de la jambe libre (petits cercles, extensions avant/côté/arrière — un mini « CAR d'équilibre »).</li>
+<li><strong>Étape 3 :</strong> fermez les yeux en appui statique (supprime l'entrée visuelle, force le recours à la proprioception/au sens vestibulaire).</li>
+<li><strong>Étape 4 (Mois 3) :</strong> ajoutez un élément instable ou imprévisible — appui sur une serviette pliée/un coussin, ou une légère perturbation sans partenaire (une poussée douce, un saut-atterrissage auto-initié).</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est entraîné ainsi</div><p>L'équilibre est de la proprioception rendue visible. Faire progresser la contrainte (plutôt que simplement « essayer plus fort ») est la manière dont le Movement Culture et les entraîneurs de gymnastique le construisent réellement — chaque étape retire une béquille sur laquelle le système nerveux s'appuyait.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>L'acuité proprioceptive, les stratégies de micro-stabilisation de la cheville/hanche, une réponse calme à l'instabilité (pertinent directement pour le travail de Headstand et de Wall Handstand).</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Agripper le sol avec les orteils au lieu de répartir la pression sur tout le pied.</li><li>Bloquer la respiration en équilibre.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise (par étape)</div><p>Maintien stable et sans précipitation de 45 s avant de passer à l'étape suivante ; régressez immédiatement si une étape provoque du gainage excessif/un blocage de la respiration plutôt qu'un contrôle calme.</p></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="inversion">
+<h2>Inversion &amp; préparation au Handstand</h2>
+<p class="intro">Le travail d'inversion est introduit en dernier et progresse de manière prudente — avec appui contre un mur tout au long de ce programme. L'objectif de ces 12 semaines est le confort, l'alignement et le temps sous tension à l'envers, pas un Handstand libre (c'est un objectif de plusieurs mois qui dépasse ce programme ; voir la section « et après » de chaque document de mois).</p>
+<div class="cards">
+
+<div class="card t2" id="headstand-prep">
+<div class="tierbar"></div>
+<div class="head"><h3>Préparation au Headstand</h3><div class="tags"><span class="tag tier2">Niveau 2</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Étape 1 — Mise en place du tripode :</strong> à genoux, placez les avant-bras et les mains au sol en formant un triangle stable (mains espacées de la largeur de la tête), entraînez-vous à poser le sommet du crâne au sol juste devant les mains sans y mettre de poids encore.</li>
+<li><strong>Étape 2 — Transfert de poids :</strong> depuis le tripode, faites doucement basculer le poids vers l'avant sur la tête/les avant-bras puis en arrière vers les genoux, en ressentant le contrôle nécessaire, les hanches restant basses.</li>
+<li><strong>Étape 3 — Groupé avec appui au mur :</strong> dos à un mur à une distance d'une tête, remontez les pieds vers une position groupée avec les hanches au-dessus de la base du tripode, le mur servant uniquement de léger arrêt de sécurité, pas de béquille dans laquelle se laisser tomber.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>Au Mois 2, le travail de Hollow Body et de poignet/CARs vous donne le contrôle du tronc et la tolérance du poignet nécessaires pour explorer l'inversion en sécurité ; ceci est délibérément calibré très en-dessous d'une tentative de Headstand complet.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>Le confort en position inversée, une répartition du poids qui préserve le cou (principalement sur les avant-bras/mains, un minimum sur la tête), la proprioception à l'envers.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Charger le poids sur le sommet de la tête au lieu du triangle mains/avant-bras.</li><li>Monter d'un coup de pied explosif au lieu d'un transfert de poids lent et contrôlé.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>15 à 20 s confortables dans le groupé avec appui au mur, la majorité du poids sur les mains/avant-bras, respiration calme, entrée et sortie contrôlées.</p></div>
+<div class="field"><div class="fl">Prérequis</div><div class="linklist"><a href="#hollow-body">Hollow Body</a><a href="#wrist-conditioning">Renforcement du poignet</a></div></div>
+<div class="field"><div class="fl">Débloque</div><div class="linklist"><a href="#headstand">Headstand Hold</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t3" id="headstand">
+<div class="tierbar"></div>
+<div class="head"><h3>Headstand Hold</h3><div class="tags"><span class="tag tier3">Niveau 3</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li>Depuis le groupé avec appui au mur, tendez lentement les hanches et les jambes vers le haut en direction du mur, en visant une ligne longue des coudes aux pieds, le poids principalement sur le triangle mains/avant-bras.</li>
+<li>Respirez normalement ; descendez avec le même contrôle utilisé pour entrer.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est en dernier</div><p>Redresser tout le corps à l'envers exige le contrôle du Hollow Body, la tolérance du poignet/avant-bras et le confort en inversion développés tout au long du programme — c'est l'aboutissement au Mois 3 du parcours d'inversion, pas un point de départ.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>Le contrôle de la ligne du corps entier à l'envers, la tolérance continue à la charge du poignet/avant-bras, un état calme du système nerveux en position inversée.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Trop cambrer le bas du dos au lieu de garder la ligne longue en Hollow.</li><li>Descendre à la hâte au lieu d'avec le même contrôle que la montée.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Maintien contrôlé de 20 à 30 s contre le mur, ligne longue et droite, entrée et sortie contrôlées, respiration calme.</p></div>
+</div>
+</div>
+</div>
+
+<div class="card t2" id="wall-handstand">
+<div class="tierbar"></div>
+<div class="head"><h3>Préparation au Wall Handstand</h3><div class="tags"><span class="tag tier2">Niveau 2 → 3</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Progression</div><ul>
+<li><strong>Étape 1 — Montée poitrine contre le mur :</strong> depuis une position proche du downward-dog face au mur, pieds proches de celui-ci, remontez les pieds le long du mur tout en reculant les mains, en vous arrêtant bien dans la zone de confort (hanches bien en-dessous de l'extension complète au début).</li>
+<li><strong>Étape 2 — Prolonger le maintien :</strong> augmentez progressivement la hauteur à laquelle les pieds montent et la durée du maintien, en vous arrêtant toujours avant la tension excessive.</li>
+<li><strong>Étape 3 (Mois 3) :</strong> brefs maintiens plus proches de l'extension complète, Hollow Body activement maintenu, toujours entièrement appuyé au mur.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi à ce stade</div><p>C'est le précurseur direct de tout futur travail de Handstand libre, et il réutilise exactement la forme de Hollow Body et la tolérance du poignet entraînées depuis le Mois 1 — introduit seulement une fois que les deux sont solides.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La stabilité de l'épaule en position au-dessus de la tête sous charge, le contrôle du Hollow Body en position inversée, le confort et l'orientation à l'envers contre un mur.</p></div>
+<div class="field"><div class="fl">Erreurs fréquentes</div><ul><li>Trop cambrer le dos (forme « banane ») au lieu de tenir une ligne en Hollow.</li><li>Monter trop haut trop vite — restez bien dans une amplitude contrôlée.</li></ul></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>Maintien de 20 s poitrine contre le mur avec une forme en Hollow activement contrôlée et une respiration stable.</p></div>
+<div class="field"><div class="fl">Prérequis</div><div class="linklist"><a href="#hollow-body">Hollow Body</a><a href="#wrist-conditioning">Renforcement du poignet</a><a href="#headstand-prep">Préparation au Headstand</a></div></div>
+</div>
+</div>
+</div>
+
+<div class="card t3" id="hanging-prep">
+<div class="tierbar"></div>
+<div class="head"><h3>Préparation à la suspension <span style="font-weight:400;font-style:italic;">(optionnel — nécessite une barre/branche)</span></h3><div class="tags"><span class="tag tier3">Niveau 3 · Optionnel</span></div></div>
+<div class="grid2">
+<div>
+<div class="field"><div class="fl">Exécution</div><ul>
+<li>Si une barre de traction, une branche solide ou une barre de jeu est disponible : suspension passive, épaules relâchées, pieds touchant légèrement le sol ou complètement décollés si c'est confortable, 10 à 20 s.</li>
+<li>Progressez vers la suspension active (épaules engagées, « protégeant » les omoplates plutôt qu'entièrement passives) pendant la même durée.</li>
+</ul></div>
+<div class="field"><div class="fl">Pourquoi c'est marqué comme optionnel</div><p>La contrainte centrale du programme est l'absence de matériel. Cette entrée existe car la suspension à l'épaule est un complément précieux au travail au sol proposé ici, et la liste de l'utilisateur la demandait explicitement — mais c'est explicitement une branche bonus, pas une porte d'entrée vers autre chose dans ce programme.</p></div>
+</div>
+<div>
+<div class="field"><div class="fl">Développe</div><p>La décompression de l'épaule et l'amplitude passive, la tolérance de la préhension, le contrôle scapulaire sous une charge en suspension.</p></div>
+<div class="field"><div class="fl">Critères de maîtrise</div><p>20 s de suspension passive et 15 s de suspension active, respiration détendue, aucune douleur de pincement à l'épaule.</p></div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+</main>
+</div>
+
+<footer>
+Fait partie de <em>The Practice</em> — un programme de fondations de 12 semaines en mouvement au sol, mobilité et contrôle du corps. <a href="index-fr.html">← Retour à l'Accueil</a> pour la philosophie, la feuille de route complète de l'arbre de compétences, le glossaire, et le système de journal.
+</footer>
+
+<button id="themeToggle" type="button" aria-label="Basculer entre thème clair et sombre" title="Basculer thème clair / sombre">
+  <span aria-hidden="true">◐</span>
+</button>
+<style>
+#themeToggle{position:fixed;right:1rem;bottom:1rem;z-index:50;width:2.6rem;height:2.6rem;
+ border-radius:50%;border:1px solid var(--line);background:var(--stone-raised);color:var(--ink);
+ font-size:1.1rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);
+ display:flex;align-items:center;justify-content:center;}
+#themeToggle:hover{border-color:var(--moss);}
+#themeToggle:focus-visible{outline:2px solid var(--ember);outline-offset:3px;}
+@media print{#themeToggle{display:none;}}
+</style>
+<script>
+(function(){
+  var root=document.documentElement, KEY='practice-theme';
+  try{var s=localStorage.getItem(KEY); if(s){root.setAttribute('data-theme',s);}}catch(e){}
+  var b=document.getElementById('themeToggle');
+  b&&b.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem(KEY,next);}catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>

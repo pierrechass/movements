@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Praxis — Ein Bewegungslernsystem</title>
+</head>
+<body>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+img{max-width:100%;height:auto;}
+
+:root{
+  --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC;
+  --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49;
+  --ember:#8C4E2C; --ember-deep:#743E22;
+  --line:#C9C3AC; --line-soft:#D8D3BE;
+  --spine:var(--moss);
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+  --radius:3px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+}
+:root[data-theme="dark"]{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+:root[data-theme="light"]{ --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC; --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49; --ember:#8C4E2C; --ember-deep:#743E22; --line:#C9C3AC; --line-soft:#D8D3BE; }
+*{box-sizing:border-box;}
+body{margin:0; background:var(--stone); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.6;}
+a{color:var(--moss-deep); text-decoration-color:var(--line);}
+@media (prefers-color-scheme:dark){a{color:var(--moss-bright);}}
+:root[data-theme="dark"] a{color:var(--moss-bright);}
+a:focus-visible{outline:2px solid var(--ember); outline-offset:3px;}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0 0 .4em;}
+.topbar{position:sticky; top:0; z-index:20; background:var(--stone); border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.9rem; padding:.65rem 1.4rem; font-size:.82rem; flex-wrap:wrap;}
+.topbar .mark{width:9px;height:9px;border-radius:50%;background:var(--spine); flex:none;}
+.topbar strong{font-family:var(--font-display); font-size:.95rem;}
+.topbar nav{display:flex; gap:1.1rem; margin-left:auto; flex-wrap:wrap;}
+.topbar nav a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent;}
+.topbar nav a:hover, .topbar nav a.current{color:var(--ink); border-bottom-color:var(--spine);}
+.topbar .langsw{display:flex; gap:.35rem; font-size:.78rem;}
+.topbar .langsw a{color:var(--ink-soft); text-decoration:none; padding:.15rem .4rem; border:1px solid transparent; border-radius:3px;}
+.topbar .langsw a:hover{color:var(--ink);}
+.topbar .langsw a.lang-current{color:var(--ink); border-color:var(--line); background:var(--stone-raised);}
+.hero{max-width:760px; margin:0 auto; padding:4rem 1.4rem 2.2rem;}
+.hero .eyebrow{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--moss-deep); margin-bottom:1rem;}
+.hero h1{font-size:2.7rem; line-height:1.08;}
+.hero p.lede{font-size:1.18rem; color:var(--ink-soft); margin-top:1rem;}
+.hero .startlinks{display:flex; gap:.7rem; margin-top:1.6rem; flex-wrap:wrap;}
+.startlinks a{font-size:.88rem; text-decoration:none; border:1px solid var(--line); padding:.5rem .9rem; border-radius:20px; color:var(--ink);}
+.startlinks a.primary{background:var(--moss-deep); border-color:var(--moss-deep); color:var(--stone);}
+:root[data-theme="dark"] .startlinks a.primary, @media (prefers-color-scheme:dark){.startlinks a.primary{color:var(--ground,#1B1E17);}}
+.startlinks a:hover{border-color:var(--moss);}
+.wrap{max-width:1180px; margin:0 auto; padding:0 1.4rem 6rem; display:grid; grid-template-columns:220px 1fr; gap:2.6rem;}
+@media (max-width:880px){.wrap{grid-template-columns:1fr;} .rail{display:none;}}
+.rail{position:sticky; top:3.4rem; align-self:start; font-size:.84rem; max-height:calc(100vh - 4rem); overflow-y:auto; padding-bottom:2rem;}
+.rail h3{font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-weight:600; margin-bottom:.6rem;}
+.rail ul{list-style:none; margin:0 0 1.4rem; padding:0;}
+.rail li{margin-bottom:.35rem;}
+.rail a{color:var(--ink-soft); text-decoration:none;}
+.rail a:hover{color:var(--ink);}
+main{max-width:900px;}
+main > section{margin-bottom:3.4rem;}
+main > section > h2{font-size:1.5rem; border-bottom:1px solid var(--line); padding-bottom:.5rem; margin-bottom:1rem;}
+main > section > p.intro{color:var(--ink-soft); margin-bottom:1.2rem;}
+main p{max-width:66ch;}
+.pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1.4rem 0;}
+@media (max-width:700px){.pillars{grid-template-columns:1fr;}}
+.pillar{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+.pillar h4{font-size:.95rem; margin-bottom:.35rem;}
+.pillar p{font-size:.88rem; color:var(--ink-soft); margin:0;}
+.docgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-top:1.4rem;}
+@media (max-width:700px){.docgrid{grid-template-columns:1fr;}}
+.doccard{border:1px solid var(--line); background:var(--stone-raised); border-radius:var(--radius); padding:1.1rem 1.2rem; text-decoration:none; color:var(--ink); display:block;}
+.doccard:hover{border-color:var(--moss);}
+.doccard .dc-eyebrow{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--moss-deep); display:block; margin-bottom:.3rem;}
+.doccard h4{font-size:1.05rem; margin-bottom:.3rem;}
+.doccard p{font-size:.86rem; color:var(--ink-soft); margin:0;}
+.roadmap{display:grid; grid-template-columns:repeat(4,1fr); gap:.9rem; align-items:start;}
+@media (max-width:880px){.roadmap{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.roadmap{grid-template-columns:1fr;}}
+.tiercol{display:flex; flex-direction:column; gap:.55rem;}
+.tiercol .tierhead{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); padding-bottom:.4rem; border-bottom:2px solid var(--line); margin-bottom:.2rem;}
+.node{border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised); padding:.55rem .7rem; font-size:.82rem; position:relative; padding-left:.85rem;}
+.node::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:2px 0 0 2px;}
+.tiercol.t0 .node::before{background:var(--line);}
+.tiercol.t1 .node::before{background:var(--moss-deep);}
+.tiercol.t2 .node::before{background:var(--moss);}
+.tiercol.t3 .node::before{background:var(--ember);}
+.node .n-name{font-weight:600; display:block;}
+.node .n-from{color:var(--ink-soft); font-size:.76rem; display:block; margin-top:.15rem;}
+dl.glossary{margin:0;}
+dl.glossary dt{font-family:var(--font-display); font-weight:600; font-size:1rem; margin-top:1.1rem; color:var(--moss-deep);}
+:root[data-theme="dark"] dl.glossary dt{color:var(--moss-bright);}
+dl.glossary dd{margin:.25rem 0 0; font-size:.94rem; max-width:64ch;}
+.journalblock{border:1px solid var(--line); background:var(--stone-raised); border-radius:var(--radius); padding:1.2rem 1.3rem; margin-top:1rem;}
+.journalblock h4{font-size:1rem; margin-bottom:.5rem;}
+.tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised); margin-top:.8rem;}
+table{border-collapse:collapse; width:100%; font-size:.85rem; min-width:520px;}
+th,td{padding:.5rem .65rem; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:top;}
+thead th{font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+tbody tr:last-child td{border-bottom:none;}
+.callout{border-left:3px solid var(--ember); background:var(--stone-sunken); padding:.7rem .9rem; border-radius:0 var(--radius) var(--radius) 0; font-size:.9rem; margin-top:.9rem;}
+.callout .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.reslist{list-style:none; padding:0; margin:0; display:grid; gap:.7rem;}
+.reslist li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.7rem .9rem; font-size:.9rem;}
+.reslist .topic{font-weight:600; display:block; margin-bottom:.15rem;}
+footer{max-width:900px; margin:0 auto; padding:2rem 1.4rem 4rem; color:var(--ink-soft); font-size:.85rem; border-top:1px solid var(--line);}
+</style>
+
+<div class="topbar">
+  <span class="mark"></span><strong>The Practice</strong>
+  <nav>
+    <a href="#" class="current">Übersicht</a>
+    <a href="exercises-de.html">Übungsbibliothek</a>
+    <a href="month1-de.html">Monat 1</a>
+    <a href="month2-de.html">Monat 2</a>
+    <a href="month3-de.html">Monat 3</a>
+  </nav>
+  <div class="langsw" aria-label="Sprache">
+    <a href="index.html">EN</a>
+    <a href="index-fr.html">FR</a>
+    <a href="index-de.html" class="lang-current">DE</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Ein Bewegungslernsystem</div>
+  <h1>The Practice</h1>
+  <p class="lede">Ein 12-wöchiges Grundlagen-Curriculum für Bodenbewegung, Mobility und Körperkontrolle — aufbauend auf Movement Culture, Animal Flow, Functional Range Conditioning, Bodyweight-Gymnastik, GMB und MovNat. Aufgebaut als Skill-Tree mit Voraussetzungen und Meisterschafts-Gates, nicht als Trainingskalender.</p>
+  <div class="startlinks">
+    <a class="primary" href="month1-de.html">Start: Monat 1 →</a>
+    <a href="exercises-de.html">Übungsbibliothek</a>
+  </div>
+</div>
+
+<div class="wrap">
+<nav class="rail" aria-label="Hub-Inhalt">
+  <h3>Inhalt</h3>
+  <ul>
+    <li><a href="#philosophy">Philosophie</a></li>
+    <li><a href="#how">Wie das System zusammenspielt</a></li>
+    <li><a href="#roadmap">Bewegungskompetenz-Roadmap</a></li>
+    <li><a href="#assessment">Das Assessment-System</a></li>
+    <li><a href="#glossary">Glossar</a></li>
+    <li><a href="#journal">Bewegungsjournal</a></li>
+    <li><a href="#resources">Allgemeine Ressourcen</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<section id="philosophy">
+<h2>Philosophie</h2>
+<p class="intro">Dieses Programm ist so aufgebaut, wie es ein Movement-Culture-Coach aufbauen würde: nicht um Übungen herum, sondern um Qualitäten — die rohen physischen und perzeptiven Fähigkeiten, aus denen jede Skill letztlich besteht. Ein Handstand ist hier kein „Ziel"; er ist ein später Ausdruck von Hollow-Body-Kontrolle, Handgelenktoleranz und umgekehrter Balance — alles wird getrennt trainiert, Jahre oder Monate bevor die Form selbst zählt.</p>
+<div class="pillars">
+<div class="pillar"><h4>Anpassungsfähigkeit vor Leistung</h4><p>Das Ziel ist ein Körper, der eine Lösung für ein neues Bewegungsproblem improvisieren kann — nicht ein Körper, der eine Zahl erreicht. Genau deshalb enden die Sessions mit unstrukturierter Exploration.</p></div>
+<div class="pillar"><h4>Qualität vor Quantität</h4><p>Ein 15-sekündiger Hollow-Body-Hold mit durchgehender Atmung und flachem unterem Rücken ist mehr wert als ein 40-sekündiger Hold, der zittert und bei angehaltenem Atem gehalten wird. Jede Dosierung in diesem Programm geht davon aus, dass du Qualität der geschriebenen Zahl vorziehst, wenn beides in Konflikt steht.</p></div>
+<div class="pillar"><h4>Körperintelligenz vor Kennzahlen</h4><p>Propriozeption — zu wissen, wo sich dein Körper befindet, ohne hinzusehen — wird ebenso bewusst trainiert wie Kraft. Balance-Progressionen, langsame CARs und Explorationszeit existieren gezielt, um diesen Sinn aufzubauen, den keine Wiederholungszahl erfassen kann.</p></div>
+</div>
+<p>Hier wird nichts in Kalorien, Muskelgröße oder „Intensität" gemessen. Die einzigen Feinde dieser Praxis sind Hetzen und Erzwingen — sich schneller zu bewegen, als die eigene Kontrolle erlaubt, oder sich mit Kraft durch einen Bewegungsradius zu drücken, den man sich noch nicht wirklich erarbeitet hat.</p>
+</section>
+
+<section id="how">
+<h2>Wie das System zusammenspielt</h2>
+<p class="intro">Vier Dokumente, eine Praxis. Lies sie beim ersten Mal in dieser Reihenfolge; danach wird die Übungsbibliothek zu deiner täglichen Referenz.</p>
+<div class="docgrid">
+<a class="doccard" href="month1-de.html"><span class="dc-eyebrow">Wochen 1–4</span><h4>Monat 1 — Grundlagen</h4><p>Atmung, CARs, Hollow/Arch, Deep Squat, Beast, Crab, Shin Box. Baseline- und Monatsabschluss-Assessment.</p></a>
+<a class="doccard" href="month2-de.html"><span class="dc-eyebrow">Wochen 5–8</span><h4>Monat 2 — Fortbewegung &amp; Übergänge</h4><p>Beast Crawl, Ape, Crab Walk, Sit-Through, Get-Up, Rollen, Wand-Kopfstand-Vorbereitung.</p></a>
+<a class="doccard" href="month3-de.html"><span class="dc-eyebrow">Wochen 9–12</span><h4>Monat 3 — Integration</h4><p>Scorpion, durchgehendes Rollen, selbst zusammengestellte Flows, Headstand Hold, Wall Handstand Prep, Abschluss-Assessment.</p></a>
+<a class="doccard" href="exercises-de.html"><span class="dc-eyebrow">Referenz</span><h4>Übungs- &amp; Skill-Bibliothek</h4><p>Jede Position und jedes Muster: Aufbau, Cues, Begründung, Fehler, Meisterschaftskriterien, Progressionszeichen.</p></a>
+</div>
+<div class="callout"><span class="fl">Zur Frequenz</span>Die Pläne sind für 3 Sessions/Woche à ca. 40 Minuten geschrieben (ein rotierender A/B/C-Zyklus, nicht an Kalendertage gebunden) — passend zu einem realistischen 2–3×/Woche-Rhythmus. Schaffst du in einer Woche nur 2 Sessions, rotiere den Zyklus einfach weiter und lass die 12 Wochen auf 14–16 Kalenderwochen anwachsen; die Tabellen und Gates ändern sich dadurch nicht. Hast du mehr Zeit, verlängere lieber die Komponenten 5–7 (Fortbewegung, Balance, Exploration) auf 45–60 Minuten, statt neuen Stoff hinzuzufügen.</div>
+</section>
+
+<section id="roadmap">
+<h2>Bewegungskompetenz-Roadmap</h2>
+<p class="intro">Jede Skill sitzt in einer Tier-Stufe, und jeder Knoten listet auf, worauf sie aufbaut. Lies von links nach rechts: Tier-0-Primitive werden vom ersten Tag an trainiert und hören nie auf; jede spätere Stufe wird durch die vorherige Stufe freigeschaltet, nicht durch die Kalenderwoche. Wenn du dir je unsicher bist, ob du für etwas bereit bist, prüfe, worauf es aufbaut — sind diese Grundlagen nicht solide, ist das der Punkt, zu dem du zurückkehren solltest.</p>
+<div class="roadmap">
+<div class="tiercol t0">
+<div class="tierhead">Tier 0 — Primitive</div>
+<div class="node"><span class="n-name">Diaphragmatic Breathing</span><span class="n-from">grundlegend — keine Voraussetzung</span></div>
+<div class="node"><span class="n-name">CARs (all joints)</span><span class="n-from">grundlegend</span></div>
+<div class="node"><span class="n-name">Wrist Conditioning</span><span class="n-from">grundlegend</span></div>
+<div class="node"><span class="n-name">Ankle Conditioning</span><span class="n-from">grundlegend</span></div>
+<div class="node"><span class="n-name">Dead Bug / Bird-Dog</span><span class="n-from">aus: Atmung</span></div>
+</div>
+<div class="tiercol t1">
+<div class="tierhead">Tier 1 — Grundlagen</div>
+<div class="node"><span class="n-name">Hollow Body</span><span class="n-from">aus: Atmung, CARs</span></div>
+<div class="node"><span class="n-name">Arch Body</span><span class="n-from">aus: Atmung, CARs</span></div>
+<div class="node"><span class="n-name">Deep Squat</span><span class="n-from">aus: Knöchel-/Hüft-CARs</span></div>
+<div class="node"><span class="n-name">Shin Box / 90-90</span><span class="n-from">aus: Hüft-CARs</span></div>
+<div class="node"><span class="n-name">Beast (static)</span><span class="n-from">aus: Handgelenkskonditionierung, Hollow Body</span></div>
+<div class="node"><span class="n-name">Crab (static)</span><span class="n-from">aus: Handgelenkskonditionierung, Arch Body</span></div>
+<div class="node"><span class="n-name">Rocking (Log/Fetal)</span><span class="n-from">aus: Hollow/Arch Body</span></div>
+<div class="node"><span class="n-name">Balance — static stance</span><span class="n-from">grundlegend, hier weiter verfeinert</span></div>
+</div>
+<div class="tiercol t2">
+<div class="tierhead">Tier 2 — Fortbewegung</div>
+<div class="node"><span class="n-name">Loaded Beast</span><span class="n-from">aus: Beast</span></div>
+<div class="node"><span class="n-name">Ape / Traveling Ape</span><span class="n-from">aus: Deep Squat, Handgelenkskonditionierung</span></div>
+<div class="node"><span class="n-name">Beast Crawl</span><span class="n-from">aus: Loaded Beast, Dead Bug</span></div>
+<div class="node"><span class="n-name">Crab Walk</span><span class="n-from">aus: Crab</span></div>
+<div class="node"><span class="n-name">Sit-Through</span><span class="n-from">aus: Beast, Crab</span></div>
+<div class="node"><span class="n-name">Get-Up (half-kneeling)</span><span class="n-from">aus: Deep Squat, Shin Box</span></div>
+<div class="node"><span class="n-name">Rolling — Stage 1–2</span><span class="n-from">aus: Rocking, Hollow/Arch</span></div>
+<div class="node"><span class="n-name">Headstand Prep</span><span class="n-from">aus: Hollow Body, Handgelenkskonditionierung</span></div>
+<div class="node"><span class="n-name">Wall Handstand Prep — early</span><span class="n-from">aus: Hollow Body, Handgelenkskonditionierung</span></div>
+<div class="node"><span class="n-name">Balance — eyes closed</span><span class="n-from">aus: statischem Stand</span></div>
+</div>
+<div class="tiercol t3">
+<div class="tierhead">Tier 3 — Integration</div>
+<div class="node"><span class="n-name">Scorpion</span><span class="n-from">aus: Arch Body, Sit-Through, Wirbelsäulen-CARs</span></div>
+<div class="node"><span class="n-name">Rolling — continuous</span><span class="n-from">aus: Rolling Stufe 1–2</span></div>
+<div class="node"><span class="n-name">Get-Up — multi-directional</span><span class="n-from">aus: Get-Up im Halbkniestand</span></div>
+<div class="node"><span class="n-name">Headstand Hold</span><span class="n-from">aus: Headstand Prep</span></div>
+<div class="node"><span class="n-name">Wall Handstand — full hold</span><span class="n-from">aus: Wall Handstand Prep — früh</span></div>
+<div class="node"><span class="n-name">Self-composed Flows</span><span class="n-from">aus: aller Tier-1–2-Fortbewegung</span></div>
+<div class="node"><span class="n-name">Balance — unstable surface</span><span class="n-from">aus: geschlossenen Augen</span></div>
+<div class="node"><span class="n-name">Hanging Prep <em>(optional)</em></span><span class="n-from">unabhängiger Zweig — benötigt eine Stange</span></div>
+</div>
+</div>
+<p style="margin-top:1.2rem;">Vollständige Details zu jedem Knoten — Aufbau, Cues, häufige Fehler und objektive Meisterschaftskriterien — findest du in der <a href="exercises-de.html">Übungsbibliothek</a>.</p>
+</section>
+
+<section id="assessment">
+<h2>Das Assessment-System</h2>
+<p class="intro">Dieselbe Testbatterie wiederholt sich an vier Checkpoints: vor Woche 1 (Baseline), Ende Monat 1, Ende Monat 2 und Ende Monat 3 (Abschluss). Jedes Monatsdokument enthält die genaue Batterie für diesen Checkpoint plus ein Gate — eine kurze Liste von Kriterien, die anzeigen, dass du bereit für die nächste Stufe bist, statt die Wochen nur „abgesessen" zu haben.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Checkpoint</th><th>Wo</th><th>Kernzweck</th></tr></thead>
+<tbody>
+<tr><td>Baseline</td><td>Monat 1, vor Woche 1</td><td>Ehrlicher Ausgangspunkt — noch kein Vergleich möglich, nur eine Aufzeichnung</td></tr>
+<tr><td>Ende Monat 1</td><td>Monat 1, Woche 4</td><td>Bestätigt, dass die Tier-1-Statics solide genug sind, um in Monat 2 dynamisch belastet zu werden</td></tr>
+<tr><td>Ende Monat 2</td><td>Monat 2, Woche 8</td><td>Bestätigt, dass die Fortbewegungsmuster flüssig genug sind, um in Monat 3 kombiniert zu werden</td></tr>
+<tr><td>Abschluss</td><td>Monat 3, Woche 12</td><td>Momentaufnahme des Gesamtsystems — die Entwicklungsrichtung über alle vier Checkpoints zählt mehr als jede Einzelzahl</td></tr>
+</tbody></table></div>
+<p>Die Gate-Kriterien sind bewusst nachsichtig (etwa 75 % der aufgeführten Kriterien, nicht 100 %) — es geht darum, ein wirklich unzureichend aufgebautes Fundament zu erkennen, bevor es weiter belastet wird, nicht darum, perfektionistisch Türsteher zu spielen. Im Zweifel ist eine zusätzliche Woche mit demselben Inhalt immer die sicherere Wahl, als voranzudrängen.</p>
+</section>
+
+<section id="glossary">
+<h2>Glossar</h2>
+<p class="intro">Begriffe, die in allen vier Dokumenten verwendet werden, hier einmal definiert.</p>
+<dl class="glossary">
+<dt>Mobility</dt><dd>Die Kombination aus Bewegungsreichweite und der Fähigkeit, diese Reichweite mit eigener Kraft zu nutzen — zu unterscheiden von Flexibilität, die nur die passive Reichweite beschreibt.</dd>
+<dt>Aktive Bewegungsreichweite (AROM)</dt><dd>Wie weit sich ein Gelenk allein durch eigene Muskelkraft bewegen kann, ohne äußere Hilfe. Genau das trainieren und messen CARs.</dd>
+<dt>Passive Bewegungsreichweite (PROM)</dt><dd>Wie weit sich ein Gelenk mit äußerer Hilfe bewegen kann (eine Hand, die Schwerkraft, eine Wand). Eine große Lücke zwischen PROM und AROM an einem Gelenk ist eine konkrete, trainierbare Schwachstelle — nicht bloß „Verspannung".</dd>
+<dt>Stabilität</dt><dd>Die Fähigkeit, unerwünschte Bewegung an einem Gelenk zu kontrollieren oder ihr zu widerstehen — der Großteil der „Core"-Arbeit in diesem Programm ist Rumpfstabilität: die Wirbelsäule ruhig zu halten, während sich die Gliedmaßen bewegen.</dd>
+<dt>Propriozeption</dt><dd>Der Sinn dafür, wo sich deine Körperteile im Raum befinden, ohne hinzusehen. Wird gezielt durch CARs, Balance-Progressionen und Übungen mit geschlossenen Augen trainiert.</dd>
+<dt>Interozeption</dt><dd>Der Sinn für den inneren Körperzustand — Atmung, Herzfrequenz, Spannung, Erschöpfung. Atempraxis und Cool-downs trainieren dies direkt.</dd>
+<dt>Koordination</dt><dd>Die Fähigkeit des Nervensystems, mehrere Körperteile in Reihenfolge und Timing auf ein gemeinsames Ergebnis hin zu koordinieren — genau das trainieren Beast Crawl und Get-Up im Kern.</dd>
+<dt>Fortbewegung</dt><dd>Den ganzen Körper aus eigener Kraft über den Boden zu bewegen — Beast Crawl, Ape, Crab Walk und Sit-Through sind allesamt Fortbewegungsmuster.</dd>
+<dt>Controlled Articular Rotations (CARs)</dt><dd>Die langsamstmögliche, vollständig selbst erzeugte Rotation eines Gelenks durch seine verfügbare Reichweite — die vollständige Methode findest du im Abschnitt „Gelenkvorbereitung" der Übungsbibliothek.</dd>
+<dt>PAILs / RAILs</dt><dd>Progressive/Regressive Angular Isometric Loading — eine FRC-Methode zum Kraftaufbau im Endbereich, eine Ebene über CARs. Wird in Monat 3 unter „Nach Woche 12" als nächster Schritt erwähnt, in diesem Programm aber nicht direkt trainiert.</dd>
+<dt>Kompensationsmuster</dt><dd>Eine Ersatzbewegung, mit der der Körper eine Reichweite oder Kraft simuliert, die er eigentlich nicht hat (z. B. ein Hohlkreuz, um beim Squat tiefer zu wirken). Wird für jede Skill in der Bibliothek explizit unter „Häufige Fehler" benannt.</dd>
+<dt>Kontralateral / Ipsilateral</dt><dd>Kontralateral = gegenüberliegende Gliedmaßen bewegen sich gemeinsam (rechte Hand, linkes Knie) — das Muster von Beast Crawl und Crab Walk. Ipsilateral = gleichseitige Gliedmaßen gemeinsam.</dd>
+<dt>Geschlossene Kette / Offene Kette</dt><dd>Geschlossene Kette: Das Ende der Gliedmaße (Hand oder Fuß) ist fest am Boden fixiert (Beast, Crab, Deep Squat). Offene Kette: Die Gliedmaße bewegt sich frei im Raum (eine CAR, ein Tritt). Dieses Programm ist überwiegend geschlossenkettig, was für Anfänger grundsätzlich risikoärmer ist.</dd>
+<dt>Isometrisch / Konzentrisch / Exzentrisch</dt><dd>Isometrisch: unter Spannung ruhig halten (Hollow-Body-Hold). Konzentrisch: Muskelverkürzung unter Last (Aufstehen aus dem Squat). Exzentrisch: Muskelverlängerung unter Last (kontrolliertes Absenken in den Squat).</dd>
+<dt>Kraft im Endbereich</dt><dd>Kraft, die genau am äußersten Ende der Gelenkreichweite ausgedrückt wird, statt in der Mitte. Der Grund, warum CARs jeder belasteten Skill vorausgehen — du willst nicht nur Kraft in der „sicheren Mitte" einer Reichweite haben.</dd>
+<dt>Deload</dt><dd>Eine bewusst intensitätsreduzierte Phase (die Konsolidierungswochen dieses Programms — 4, 8, 12 — funktionieren als leichte Deloads), die der Anpassung erlaubt, mit dem Training gleichzuziehen.</dd>
+<dt>Flow-Zustand / Flow (Bewegung)</dt><dd>Sowohl ein psychologischer Zustand versunkener, mühelos wirkender Konzentration als auch (in der Animal-Flow-Terminologie) eine selbst komponierte Sequenz, die mehrere Muster verbindet — Monat 3, Woche 11 trainiert beide Bedeutungen gleichzeitig.</dd>
+<dt>Motorisches Lernen</dt><dd>Wie das Nervensystem ein neues Bewegungsmuster erlernt, typischerweise in drei Stufen: kognitiv (mühsam, unbeholfen), assoziativ (verfeinernd) und autonom (automatisiert). Wird in Monat 2 erwähnt, wenn sich Beast Crawl und Ape zunächst unbeholfen anfühlen.</dd>
+</dl>
+</section>
+
+<section id="journal">
+<h2>Bewegungsjournal &amp; Tracking</h2>
+<p class="intro">Behandle das weniger wie ein Trainingslogbuch und mehr wie ein Laborheft — es geht darum, qualitative Signale (was sich flüssig anfühlte, was sich blockiert anfühlte) neben den wenigen wirklich relevanten Zahlen festzuhalten. Eine einfache Textdatei oder Tabelle reicht völlig aus; die Struktur unten ist wichtiger als das Werkzeug.</p>
+<div class="journalblock">
+<h4>Tägliche Eintragung (nach jeder Session)</h4>
+<div class="tablewrap"><table>
+<thead><tr><th>Feld</th><th>Was erfasst wird</th></tr></thead>
+<tbody>
+<tr><td>Datum &amp; Session (A/B/C)</td><td>Welcher Rotationsslot, damit du die Zyklusfrequenz über die Zeit erkennen kannst</td></tr>
+<tr><td>Dauer</td><td>Tatsächlich trainierte Zeit, nicht geplante</td></tr>
+<tr><td>Bewegungsqualität (1–5)</td><td>Deine eigene Einschätzung, wie kontrolliert sich die Session angefühlt hat — nicht Anstrengung, nicht Muskelkater</td></tr>
+<tr><td>Was sich flüssig anfühlte</td><td>Ein oder zwei konkrete Bewegungen — das schafft eine Aufzeichnung echten Fortschritts, den reine Haltezeiten nicht erfassen</td></tr>
+<tr><td>Was sich blockiert anfühlte</td><td>Wo du Zittern, Atemanhalten oder eine Kompensation bemerkt hast — dorthin geht die Aufmerksamkeit der nächsten Session</td></tr>
+<tr><td>Schmerz / Stoppsignale</td><td>Jeder scharfe Schmerz, Gelenkeinklemmung oder Taubheit — notiere es auch, wenn es geringfügig ist, und reduziere diese Bewegung beim nächsten Mal</td></tr>
+<tr><td>Eine Explorationsnotiz</td><td>Alles, was während des unstrukturierten Explorationsblocks aufgefallen ist — diese Notizen kündigen oft die „Aha"-Momente des nächsten Monats an</td></tr>
+</tbody></table></div>
+</div>
+<div class="journalblock">
+<h4>Wöchentliche Reflexion (Ende jeder Woche)</h4>
+<p style="margin:0;font-size:.94rem;">Überfliege die täglichen Einträge der Woche und beantworte in ein paar Sätzen: Welches Muster tauchte mehr als einmal auf (ein wiederkehrender Blockadepunkt, ein wiederkehrender Durchbruch)? Ist ein einzelnes Gelenk oder eine einzelne Form durchgängig der Flaschenhals? Sollte die Dosierung der nächsten Woche vom Geschriebenen abweichen, basierend darauf, wie der Körper tatsächlich reagiert hat — nicht darauf, was laut Plan als Nächstes „passieren sollte"?</p>
+</div>
+<div class="journalblock">
+<h4>Monatliches Assessment-Protokoll</h4>
+<p style="margin:0 0 .6rem;font-size:.94rem;">Führe eine durchgehende Tabelle über alle vier Checkpoints (Baseline, Ende M1, Ende M2, Abschluss) mit den Testbatterie-Items als Zeilen und den Checkpoints als Spalten — das ist der eine Teil des Journals, der es wert ist, als echte Tabelle oder Spreadsheet formatiert zu werden, da es genau darauf ankommt, Zahlen entlang einer Zeile zu lesen.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Test</th><th>Baseline</th><th>Ende M1</th><th>Ende M2</th><th>Abschluss</th></tr></thead>
+<tbody>
+<tr><td>Deep Squat Hold (s)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>Hollow Body Hold (s)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>Einbeinige Balance (s)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>…</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody></table></div>
+</div>
+</section>
+
+<section id="resources">
+<h2>Allgemeine Ressourcen</h2>
+<p class="intro">Monatsspezifische Leseempfehlungen stehen am Ende jedes Monatsdokuments. Dies hier sind breitere, programmweite Referenzen, die sich jederzeit lohnen.</p>
+<ul class="reslist">
+<li><span class="topic">Ido Portal — Movement Culture</span>Langformat-Talks und Interviews darüber, Bewegung als generalistische Praxis statt als Sportart zu trainieren — der einzelne Einfluss, der der Gesamtphilosophie dieses Programms am nächsten steht.</li>
+<li><span class="topic">Animal Flow (Mike Fitch)</span>Die Quelle des Beast/Ape/Crab/Scorpion/Sit-Through-Vokabulars, das in diesem Programm durchgängig verwendet wird.</li>
+<li><span class="topic">Functional Range Conditioning (Dr. Andreo Spina)</span>Die Quelle von CARs und der Unterscheidung zwischen aktiver und passiver Bewegungsreichweite, die im gesamten Glossar und in den Fehler-Abschnitten verwendet wird.</li>
+<li><span class="topic">GMB Fitness</span>Strukturierte Bodyweight-Gymnastik-Progressionen (Handgelenksvorbereitung, Elbow Levers, Handstand-Theorie) — eine sinnvolle Ergänzung, sobald du dich mit dem Tempo dieses Programms wohlfühlst.</li>
+<li><span class="topic">MovNat (Erwan Le Corre)</span>Die Quelle der „keine verschwendete Bewegung, reale Kompetenz"-Rahmung des Get-Up sowie des Naturgelände-Zweigs, der in Monat 3 unter „Nach Woche 12" erwähnt wird.</li>
+</ul>
+</section>
+
+</main>
+</div>
+
+<footer>
+The Practice — ein 12-wöchiges Grundlagenprogramm für Bodenbewegung, Mobility und Körperkontrolle. Vier Dokumente: dieser Hub, die Übungsbibliothek und die Monate 1–3.
+</footer>
+
+<button id="themeToggle" type="button" aria-label="Hell- oder Dunkel-Design umschalten" title="Hell/Dunkel umschalten">
+  <span aria-hidden="true">◐</span>
+</button>
+<style>
+#themeToggle{position:fixed;right:1rem;bottom:1rem;z-index:50;width:2.6rem;height:2.6rem;
+ border-radius:50%;border:1px solid var(--line);background:var(--stone-raised);color:var(--ink);
+ font-size:1.1rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);
+ display:flex;align-items:center;justify-content:center;}
+#themeToggle:hover{border-color:var(--moss);}
+#themeToggle:focus-visible{outline:2px solid var(--ember);outline-offset:3px;}
+@media print{#themeToggle{display:none;}}
+</style>
+<script>
+(function(){
+  var root=document.documentElement, KEY='practice-theme';
+  try{var s=localStorage.getItem(KEY); if(s){root.setAttribute('data-theme',s);}}catch(e){}
+  var b=document.getElementById('themeToggle');
+  b&&b.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem(KEY,next);}catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>

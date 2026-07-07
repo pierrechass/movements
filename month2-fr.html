@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Pratique — Mois 2 : Locomotion et transitions</title>
+</head>
+<body>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+img{max-width:100%;height:auto;}
+
+:root{
+  --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC;
+  --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49;
+  --ember:#8C4E2C; --ember-deep:#743E22;
+  --line:#C9C3AC; --line-soft:#D8D3BE;
+  --spine:var(--moss);
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+  --radius:3px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+}
+:root[data-theme="dark"]{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+:root[data-theme="light"]{ --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC; --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49; --ember:#8C4E2C; --ember-deep:#743E22; --line:#C9C3AC; --line-soft:#D8D3BE; }
+*{box-sizing:border-box;}
+body{margin:0; background:var(--stone); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.55;}
+a{color:var(--moss-deep); text-decoration-color:var(--line);}
+@media (prefers-color-scheme:dark){a{color:var(--moss-bright);}}
+:root[data-theme="dark"] a{color:var(--moss-bright);}
+a:focus-visible{outline:2px solid var(--ember); outline-offset:3px;}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0 0 .4em;}
+.topbar{position:sticky; top:0; z-index:20; background:var(--stone); border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.9rem; padding:.65rem 1.4rem; font-size:.82rem; flex-wrap:wrap;}
+.topbar .mark{width:9px;height:9px;border-radius:50%;background:var(--spine); flex:none;}
+.topbar strong{font-family:var(--font-display); font-size:.95rem;}
+.topbar nav{display:flex; gap:1.1rem; margin-left:auto; flex-wrap:wrap;}
+.topbar nav a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent;}
+.topbar nav a:hover, .topbar nav a.current{color:var(--ink); border-bottom-color:var(--spine);}
+.topbar .langsw{display:flex; gap:.35rem; font-size:.78rem;}
+.topbar .langsw a{color:var(--ink-soft); text-decoration:none; padding:.15rem .4rem; border:1px solid transparent; border-radius:3px;}
+.topbar .langsw a:hover{color:var(--ink);}
+.topbar .langsw a.lang-current{color:var(--ink); border-color:var(--line); background:var(--stone-raised);}
+.hero{max-width:920px; margin:0 auto; padding:3rem 1.4rem 1.6rem;}
+.hero .eyebrow{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--moss-deep); margin-bottom:.9rem;}
+.hero h1{font-size:2.4rem; line-height:1.12;}
+.hero p.lede{font-size:1.1rem; color:var(--ink-soft); max-width:660px; margin-top:.8rem;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 1.4rem 6rem; display:grid; grid-template-columns:220px 1fr; gap:2.6rem;}
+@media (max-width:880px){.wrap{grid-template-columns:1fr;} .rail{display:none;}}
+.rail{position:sticky; top:3.4rem; align-self:start; font-size:.84rem; max-height:calc(100vh - 4rem); overflow-y:auto; padding-bottom:2rem;}
+.rail h3{font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-weight:600; margin-bottom:.6rem;}
+.rail ul{list-style:none; margin:0 0 1.4rem; padding:0;}
+.rail li{margin-bottom:.35rem;}
+.rail a{color:var(--ink-soft); text-decoration:none;}
+.rail a:hover{color:var(--ink);}
+main > section{margin-bottom:3rem;}
+main > section > h2{font-size:1.45rem; border-bottom:1px solid var(--line); padding-bottom:.5rem; margin-bottom:1rem;}
+main > section > p.intro{color:var(--ink-soft); max-width:680px; margin-bottom:1.2rem;}
+.objectives{display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem 1.4rem; list-style:none; padding:0; margin:0;}
+@media (max-width:640px){.objectives{grid-template-columns:1fr;}}
+.objectives li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.6rem .8rem; font-size:.92rem;}
+.tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised);}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px;}
+th,td{padding:.55rem .7rem; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:top;}
+thead th{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+tbody tr:last-child td{border-bottom:none;}
+td.dur{font-family:var(--font-mono); color:var(--ink-soft); white-space:nowrap; font-variant-numeric:tabular-nums;}
+.weekcard{border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised); padding:1.3rem 1.4rem; margin-bottom:1.6rem;}
+.weekcard .whead{display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap; margin-bottom:.3rem;}
+.weekcard .whead .wk{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--moss-deep); background:var(--stone-sunken); border:1px solid var(--line); padding:.15rem .55rem; border-radius:12px;}
+.weekcard h3{font-size:1.18rem; margin:0;}
+.weekcard .goal{color:var(--ink-soft); font-size:.93rem; margin:.3rem 0 1rem;}
+.deltas{font-size:.85rem; color:var(--ink-soft); margin-top:.9rem;}
+.deltas .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.callout{border-left:3px solid var(--ember); background:var(--stone-sunken); padding:.7rem .9rem; border-radius:0 var(--radius) var(--radius) 0; font-size:.9rem; margin-top:.9rem;}
+.callout .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.gate{border:1px solid var(--moss-deep); background:var(--stone-sunken); padding:1rem 1.1rem; border-radius:var(--radius); margin-top:1rem;}
+.gate .fl{font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--moss-deep); margin-bottom:.4rem; display:block;}
+.reslist{list-style:none; padding:0; margin:0; display:grid; gap:.7rem;}
+.reslist li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.7rem .9rem; font-size:.9rem;}
+.reslist .topic{font-weight:600; display:block; margin-bottom:.15rem;}
+footer{max-width:920px; margin:0 auto; padding:2rem 1.4rem 4rem; color:var(--ink-soft); font-size:.85rem; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;}
+</style>
+
+<div class="topbar">
+  <span class="mark"></span><strong>The Practice</strong>
+  <nav>
+    <a href="index-fr.html">Accueil</a>
+    <a href="exercises-fr.html">Bibliothèque d'exercices</a>
+    <a href="month1-fr.html">Mois 1</a>
+    <a href="#" class="current">Mois 2</a>
+    <a href="month3-fr.html">Mois 3</a>
+  </nav>
+  <div class="langsw" aria-label="Langue">
+    <a href="month2.html">EN</a>
+    <a href="month2-fr.html" class="lang-current">FR</a>
+    <a href="month2-de.html">DE</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Mois 2 sur 3 · Semaines 5–8</div>
+  <h1>Locomotion et transitions</h1>
+  <p class="lede">Le Mois 1 a construit des formes que vous pouvez maintenir immobiles. Ce mois-ci les met en mouvement et commence à les relier entre elles — Beast devient Beast Crawl, le squat devient Ape, Beast et Crab se rencontrent dans Sit-Through. L'inversion est introduite avec prudence, uniquement avec appui au mur.</p>
+</div>
+
+<div class="wrap">
+<nav class="rail" aria-label="Sommaire du Mois 2">
+  <h3>Sommaire</h3>
+  <ul>
+    <li><a href="#objectives">Objectifs techniques</a></li>
+    <li><a href="#start">Bilan de début de mois</a></li>
+    <li><a href="#week5">Semaine 5</a></li>
+    <li><a href="#week6">Semaine 6</a></li>
+    <li><a href="#week7">Semaine 7</a></li>
+    <li><a href="#week8">Semaine 8</a></li>
+    <li><a href="#assess-end">Bilan de fin de mois</a></li>
+    <li><a href="#gate">Passage au Mois 3</a></li>
+    <li><a href="#resources">Ressources</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<section id="objectives">
+<h2>Objectifs techniques — Mois 2</h2>
+<p class="intro">À la fin de la semaine 8, en plus de tout ce qui a été retenu du Mois 1 :</p>
+<ul class="objectives">
+<li>Beast Crawl sur 10 pas en avant et en arrière, hanches de niveau</li>
+<li>Traveling Ape, 8 sauts bas ou plus en couvrant du terrain</li>
+<li>Crab Walk sur 10 pas sans affaissement de la hanche</li>
+<li>Sit-Through, 3 répétitions propres par côté, Beast → Crab → Beast</li>
+<li>Get-Up (stade à demi-genou), les deux côtés, sans appui des mains</li>
+<li>Wall headstand-prep tuck, appui mural, 15–20 s</li>
+<li>Fetal Rock / Log Roll → premiers balancés vers l'épaule (Stade 1)</li>
+<li>Équilibre unijambiste yeux fermés, 20 s ou plus par côté</li>
+</ul>
+</section>
+
+<section id="start">
+<h2>Bilan de début de mois</h2>
+<p class="intro">Il s'agit du même test que le bilan de fin de mois du Mois 1 — si vous venez de le terminer, utilisez ces chiffres comme référence pour ce mois plutôt que de retester immédiatement. Ajoutez ces quatre nouveaux contrôles de référence pour des compétences que vous allez entraîner pour la première fois :</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Test</th><th>Ce que vous notez</th><th>Pourquoi ce test</th></tr></thead>
+<tbody>
+<tr><td>Tentative de Beast Crawl</td><td>Pas en avant avant que la forme ne se dégrade (hanches qui montent, mouvement non contralatéral)</td><td>Référence pour un tout nouveau schéma de coordination</td></tr>
+<tr><td>Tentative d'Ape</td><td>Pouvez-vous réaliser 1 saut bas depuis le Deep Squat et atterrir bas ? O/N</td><td>Vérifie que les prérequis de squat et de poignet sont vraiment prêts à être chargés dynamiquement</td></tr>
+<tr><td>Tentative de Sit-Through</td><td>Pouvez-vous tourner depuis Beast à mi-chemin vers Crab d'un côté, même lentement ? O/N</td><td>Diagnostic de l'amplitude de rotation hanche/tronc avant l'introduction formelle</td></tr>
+<tr><td>Wall headstand tripod</td><td>Secondes confortables dans la position tripod à genoux, sans encore mettre de poids sur la tête</td><td>Confirme la tolérance du poignet et le confort avant toute mise en charge en inversion</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="week5">
+<div class="weekcard" id="w5">
+<div class="whead"><span class="wk">Semaine 5</span><h3>Charger ce que vous avez construit</h3></div>
+<p class="goal"><strong>Objectif d'apprentissage de la semaine :</strong> reprendre les maintiens statiques du Mois 1 et commencer à y transférer du poids — Loaded Beast, sauts d'Ape sur place, Get-Up à demi-genou avec appui des mains. Rien ne se déplace encore.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Composante</th><th>Séance A</th><th>Séance B</th><th>Séance C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 min)</td><td>Séquence complète</td><td>Séquence complète</td><td>Séquence complète + répétitions supplémentaires d'épaule</td></tr>
+<tr><td>Respiration (3 min)</td><td>Diaphragmatique ×10</td><td>Diaphragmatique ×8 puis maintien Hollow</td><td>Diaphragmatique ×10</td></tr>
+<tr><td>Gainage (6 min)</td><td>Hollow + Arch prolongés, 3×25 s chacun</td><td>Dead Bug 2×8/côté + Bird-Dog 2×8/côté</td><td>Hollow + Arch + Dead Bug, une série chacun</td></tr>
+<tr><td>Mobilité active (7 min)</td><td>Deep Squat 3×45 s + transferts de poids</td><td>Changements de Shin Box 3×5/côté</td><td>Flow combiné Deep Squat + Shin Box, 4 min</td></tr>
+<tr><td>Locomotion (9 min)</td><td>Transferts de poids en Loaded Beast 3×10 + sauts d'Ape sur place 3×3</td><td>Crab Walk 4×5 pas + Loaded Beast en extension 2×6/côté</td><td>Sauts d'Ape sur place 3×4 + Crab Walk 3×5 pas</td></tr>
+<tr><td>Équilibre (4 min)</td><td>Unijambiste yeux fermés 3×15 s/côté</td><td>Unijambiste + combo d'extension, 3×20 s/côté</td><td>Unijambiste yeux fermés 3×15 s/côté</td></tr>
+<tr><td>Exploration (4 min)</td><td>Pratique du Get-Up à demi-genou, appui des mains, les deux côtés, lentement</td><td>Flow libre : squat–genou–Beast–Crab, au choix</td><td>Get-Up à demi-genou, appui des mains, les deux côtés</td></tr>
+<tr><td>Retour au calme (3 min)</td><td>Posture de l'enfant + respiration</td><td>Scan corporel</td><td>Pli assis vers l'avant + respiration</td></tr>
+</tbody></table></div>
+<div class="callout"><span class="fl">À surveiller</span>Dans les sauts d'Ape : remonter à hauteur debout entre les répétitions. Rester bas est tout l'enjeu — si vous ne pouvez pas rester bas, vous n'êtes pas encore prêt à vous déplacer (ce n'est pas grave, travaillez plus longtemps le saut sur place).</div>
+</div>
+</section>
+
+<section id="week6">
+<div class="weekcard" id="w6">
+<div class="whead"><span class="wk">Semaine 6</span><h3>Se déplacer</h3></div>
+<p class="goal"><strong>Objectif d'apprentissage de la semaine :</strong> ajouter de la distance. Beast Crawl et Traveling Ape demandent tous les deux de conserver la qualité de forme du Mois 1 tout en couvrant du terrain — attendez-vous à ce que ce soit maladroit pendant les premières séances ; c'est un apprentissage moteur normal, pas une régression.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Composante</th><th>Séance A</th><th>Séance B</th><th>Séance C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 min)</td><td>Séquence complète</td><td>Séquence complète</td><td>Séquence complète</td></tr>
+<tr><td>Respiration (3 min)</td><td>Diaphragmatique ×10</td><td>Diaphragmatique ×10</td><td>Diaphragmatique ×8 puis maintien Arch</td></tr>
+<tr><td>Gainage (6 min)</td><td>Hollow + Arch, 3×25 s chacun</td><td>Dead Bug / Bird-Dog, 3×8/côté</td><td>Rotation Hollow + Arch + Dead Bug</td></tr>
+<tr><td>Mobilité active (7 min)</td><td>Deep Squat 2×45 s + changements de Shin Box 2×5/côté</td><td>Maintiens chargés du poignet 3×20 s (Stade 4) + bascule de cheville 2×8/côté</td><td>Flow combiné Deep Squat + Shin Box</td></tr>
+<tr><td>Locomotion (9 min)</td><td>Beast Crawl en avant, 4×5 pas</td><td>Traveling Ape, 4×4 sauts</td><td>Crab Walk 3×6 pas + tentative de Sit-Through, lentement, 2/côté</td></tr>
+<tr><td>Équilibre (4 min)</td><td>Unijambiste yeux fermés 3×20 s/côté</td><td>Unijambiste sur serviette pliée (aperçu du Stade 4), 3×10 s/côté</td><td>Unijambiste yeux fermés 3×20 s/côté</td></tr>
+<tr><td>Exploration (4 min)</td><td>Mise en place du Headstand tripod + transfert de poids, Stade 2, 4×10 s</td><td>Flow libre combinant Beast Crawl et Ape</td><td>Transfert de poids en Headstand tripod, 4×10 s</td></tr>
+<tr><td>Retour au calme (3 min)</td><td>Scan corporel</td><td>Posture de l'enfant + respiration</td><td>Immobilité au sol</td></tr>
+</tbody></table></div>
+<div class="deltas"><span class="fl">Changement par rapport à la Semaine 5</span>Beast Crawl et Ape se déplacent désormais ; Sit-Through est introduit comme une tentative lente et incomplète ; la préparation au headstand passe au stade du transfert de poids.</div>
+</div>
+</section>
+
+<section id="week7">
+<div class="weekcard" id="w7">
+<div class="whead"><span class="wk">Semaine 7</span><h3>Relier les schémas</h3></div>
+<p class="goal"><strong>Objectif d'apprentissage de la semaine :</strong> Sit-Through est entraîné en entier (dans les deux sens), Get-Up abandonne l'appui des mains, et le rolling franchit sa première vraie étape (rock-to-shoulder). C'est la semaine la plus dense techniquement du programme — attendez-vous à passer plus de temps dans les composantes 5 à 7 à chaque séance.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Composante</th><th>Séance A</th><th>Séance B</th><th>Séance C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 min)</td><td>Séquence complète</td><td>Séquence complète</td><td>Séquence complète</td></tr>
+<tr><td>Respiration (3 min)</td><td>Diaphragmatique ×10</td><td>Diaphragmatique ×10</td><td>Diaphragmatique ×10</td></tr>
+<tr><td>Gainage (6 min)</td><td>Hollow + Arch, 3×25 s chacun</td><td>Hollow + Arch, 3×25 s chacun</td><td>Dead Bug/Bird-Dog + Hollow/Arch, une série chacun</td></tr>
+<tr><td>Mobilité active (7 min)</td><td>Flow Deep Squat + Shin Box, 4 min</td><td>Maintiens chargés du poignet 3×20 s + bascule de cheville 2×8/côté</td><td>Flow Deep Squat + Shin Box, 4 min</td></tr>
+<tr><td>Locomotion (9 min)</td><td>Sit-Through, dans les deux sens, 4×2/côté, lentement</td><td>Beast Crawl en arrière, 3×5 pas</td><td>Sit-Through 3×2/côté + Beast Crawl latéral, 2×5 pas</td></tr>
+<tr><td>Équilibre (4 min)</td><td>Unijambiste yeux fermés + extension, mixte, 3 séries</td><td>Unijambiste sur serviette pliée, 3×12 s/côté</td><td>Unijambiste yeux fermés 3×20 s/côté</td></tr>
+<tr><td>Exploration (4 min)</td><td>Get-Up à demi-genou, sans les mains, les deux côtés</td><td>Exercice de rolling rock-to-shoulder, 4×3/côté, sol souple</td><td>Get-Up sans les mains + rock-to-shoulder, une série chacun</td></tr>
+<tr><td>Retour au calme (3 min)</td><td>Scan corporel</td><td>Pli assis vers l'avant + respiration</td><td>Posture de l'enfant + respiration</td></tr>
+</tbody></table></div>
+<div class="callout"><span class="fl">À surveiller</span>Dans le rolling rock-to-shoulder : tout contact du dessus de la tête avec le sol. Arrêtez, revenez au Fetal Rock pendant une séance, et ne réintroduisez l'exercice qu'une fois le rentré de menton devenu automatique.</div>
+</div>
+</section>
+
+<section id="week8">
+<div class="weekcard" id="w8">
+<div class="whead"><span class="wk">Semaine 8</span><h3>Consolidation</h3></div>
+<p class="goal"><strong>Objectif d'apprentissage de la semaine :</strong> aucun nouveau contenu. Combinez les schémas de ce mois en flows courts et volontaires (par ex., Beast → Sit-Through → Crab → Crab Walk → retour à Beast) et préparez-vous à retester.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Composante</th><th>Séance A</th><th>Séance B</th><th>Séance C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 min)</td><td>Séquence complète, focus sur l'articulation la plus faible</td><td>Séquence complète</td><td>Séquence complète</td></tr>
+<tr><td>Respiration (3 min)</td><td>Diaphragmatique ×10</td><td>Diaphragmatique ×10</td><td>Diaphragmatique ×10</td></tr>
+<tr><td>Gainage (6 min)</td><td>Hollow + Arch, 3×25 s chacun</td><td>Dead Bug/Bird-Dog, 3×8/côté</td><td>Rotation Hollow + Arch + Dead Bug</td></tr>
+<tr><td>Mobilité active (7 min)</td><td>Flow Deep Squat + Shin Box, 5 min</td><td>Renforcement poignet + cheville, série complète</td><td>Flow Deep Squat + Shin Box, 5 min</td></tr>
+<tr><td>Locomotion (9 min)</td><td>Beast Crawl (n'importe quelle direction) + Traveling Ape, flow court</td><td>Sit-Through + Crab Walk, flow court</td><td>Flow complet : Beast → Sit-Through → Crab → Crab Walk → Beast, ×3</td></tr>
+<tr><td>Équilibre (4 min)</td><td>Unijambiste façon retest, yeux ouverts et fermés</td><td>Unijambiste sur serviette, 3×15 s/côté</td><td>Unijambiste façon retest, les deux variantes</td></tr>
+<tr><td>Exploration (4 min)</td><td>Maintien tuck du Headstand tripod, appui mural, 3×12 s</td><td>Get-Up, multidirectionnel, les deux côtés</td><td>Tuck de headstand + Get-Up, une série chacun</td></tr>
+<tr><td>Retour au calme (3 min)</td><td>Scan corporel</td><td>Scan corporel</td><td>Scan corporel + immobilité prolongée</td></tr>
+</tbody></table></div>
+</div>
+</section>
+
+<section id="assess-end">
+<h2>Bilan de fin de mois</h2>
+<p class="intro">Reprenez l'ensemble de la batterie de tests du Mois 1 (Deep Squat, Hollow, Arch, Shin Box, équilibre unijambiste, poignet, cheville, CARs d'épaule) et ajoutez ci-dessous les nouveaux tests de ce mois. Notez tout dans votre journal, sous les entrées de la Semaine 4.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Test</th><th>Ce que vous notez</th></tr></thead>
+<tbody>
+<tr><td>Beast Crawl</td><td>Pas contrôlés en avant / en arrière avant que la forme ne se dégrade</td></tr>
+<tr><td>Traveling Ape</td><td>Nombre de sauts bas consécutifs en couvrant du terrain</td></tr>
+<tr><td>Crab Walk</td><td>Pas sans affaissement de la hanche</td></tr>
+<tr><td>Sit-Through</td><td>Répétitions propres par côté, Beast → Crab → Beast</td></tr>
+<tr><td>Get-Up (à demi-genou)</td><td>O/N des deux côtés, sans les mains</td></tr>
+<tr><td>Wall headstand tuck</td><td>Secondes maximum tenues, répartition du poids (mains/avant-bras vs tête)</td></tr>
+</tbody></table></div>
+</section>
+
+<div class="gate" id="gate">
+<span class="fl">Critères de passage — Prêt pour le Mois 3</span>
+<p style="margin:0 0 .6rem;">Répondez oui à au moins 7 de ces 9 critères avant de passer au travail d'intégration du Mois 3 (Scorpion, flows complets, Headstand Hold, Wall Handstand). Si vous êtes en dessous, passez une semaine supplémentaire sur le contenu des Semaines 7–8 du Mois 2.</p>
+<ul style="margin:0; padding-left:1.2rem; font-size:.92rem;">
+<li>Tous les critères de passage du Mois 1 tiennent toujours (squat, hollow, arch, beast, crab, shin box, équilibre, aucune douleur)</li>
+<li>Beast Crawl, 10 pas en avant et en arrière, hanches de niveau</li>
+<li>Traveling Ape, 8 sauts bas ou plus</li>
+<li>Crab Walk, 10 pas, sans affaissement de hanche</li>
+<li>Sit-Through, 3 répétitions propres par côté dans les deux sens</li>
+<li>Get-Up à demi-genou, les deux côtés, sans les mains</li>
+<li>Wall headstand tuck, 15–20 s, poids majoritairement sur les mains/avant-bras</li>
+<li>Équilibre unijambiste yeux fermés, 20 s ou plus par côté</li>
+<li>Aucune douleur aux poignets, aux chevilles ou au cou</li>
+</ul>
+</div>
+
+<section id="resources">
+<h2>Ressources pédagogiques — Mois 2</h2>
+<ul class="reslist">
+<li><span class="topic">MovNat — philosophie de la locomotion naturelle au sol</span>Les articles et vidéos publics de MovNat sur le déplacement à quatre pattes expliquent pourquoi les schémas de locomotion contralatérale (Beast Crawl) sont entraînés comme une compétence à part entière, et pas seulement comme du « travail de gainage ».</li>
+<li><span class="topic">Ukemi (chute) en judo — mécanique du rolling</span>N'importe quel tutoriel d'ukemi pour débutant explique la ligne diagonale épaule-hanche utilisée dans les Rolling Patterns de ce programme — une référence visuelle utile pour comprendre pourquoi la roulade évite la tête et le cou.</li>
+<li><span class="topic">GMB Fitness — articles de préparation du poignet</span>Le contenu de GMB sur la préparation du poignet se combine bien avec l'augmentation de la mise en charge du poignet ce mois-ci (Beast Crawl, Ape, préparation au headstand) — à lire avant la Semaine 6.</li>
+<li><span class="topic">Apprentissage moteur — les stades d'acquisition d'une compétence</span>Renseignez-vous sur les trois stades de Fitts &amp; Posner (cognitif, associatif, autonome). Beast Crawl et Ape donneront cette sensation de stade « cognitif » ce mois-ci — maladroit et coûteux en effort — savoir que c'est une phase attendue, et non un signe que vous vous y prenez mal, aide beaucoup.</li>
+</ul>
+</section>
+
+</main>
+</div>
+
+<footer>
+<span><a href="index-fr.html">← Accueil</a> · <a href="month1-fr.html">Mois 1</a> · <a href="exercises-fr.html">Bibliothèque d'exercices</a></span>
+<span>Suivant : <a href="month3-fr.html">Mois 3 — Intégration →</a></span>
+</footer>
+
+<button id="themeToggle" type="button" aria-label="Basculer entre le thème clair et sombre" title="Basculer clair / sombre">
+  <span aria-hidden="true">◐</span>
+</button>
+<style>
+#themeToggle{position:fixed;right:1rem;bottom:1rem;z-index:50;width:2.6rem;height:2.6rem;
+ border-radius:50%;border:1px solid var(--line);background:var(--stone-raised);color:var(--ink);
+ font-size:1.1rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);
+ display:flex;align-items:center;justify-content:center;}
+#themeToggle:hover{border-color:var(--moss);}
+#themeToggle:focus-visible{outline:2px solid var(--ember);outline-offset:3px;}
+@media print{#themeToggle{display:none;}}
+</style>
+<script>
+(function(){
+  var root=document.documentElement, KEY='practice-theme';
+  try{var s=localStorage.getItem(KEY); if(s){root.setAttribute('data-theme',s);}}catch(e){}
+  var b=document.getElementById('themeToggle');
+  b&&b.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem(KEY,next);}catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>

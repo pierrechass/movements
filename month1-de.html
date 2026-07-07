@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Praxis — Monat 1: Grundlagen</title>
+</head>
+<body>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+img{max-width:100%;height:auto;}
+
+:root{
+  --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC;
+  --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49;
+  --ember:#8C4E2C; --ember-deep:#743E22;
+  --line:#C9C3AC; --line-soft:#D8D3BE;
+  --spine:var(--moss-deep);
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+  --radius:3px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+}
+:root[data-theme="dark"]{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+:root[data-theme="light"]{ --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC; --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49; --ember:#8C4E2C; --ember-deep:#743E22; --line:#C9C3AC; --line-soft:#D8D3BE; }
+*{box-sizing:border-box;}
+body{margin:0; background:var(--stone); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.55;}
+a{color:var(--moss-deep); text-decoration-color:var(--line);}
+@media (prefers-color-scheme:dark){a{color:var(--moss-bright);}}
+:root[data-theme="dark"] a{color:var(--moss-bright);}
+a:focus-visible{outline:2px solid var(--ember); outline-offset:3px;}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0 0 .4em;}
+.topbar{position:sticky; top:0; z-index:20; background:var(--stone); border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.9rem; padding:.65rem 1.4rem; font-size:.82rem; flex-wrap:wrap;}
+.topbar .mark{width:9px;height:9px;border-radius:50%;background:var(--spine); flex:none;}
+.topbar strong{font-family:var(--font-display); font-size:.95rem;}
+.topbar nav{display:flex; gap:1.1rem; margin-left:auto; flex-wrap:wrap;}
+.topbar nav a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent;}
+.topbar nav a:hover, .topbar nav a.current{color:var(--ink); border-bottom-color:var(--spine);}
+.topbar .langsw{display:flex; gap:.35rem; font-size:.78rem;}
+.topbar .langsw a{color:var(--ink-soft); text-decoration:none; padding:.15rem .4rem; border:1px solid transparent; border-radius:3px;}
+.topbar .langsw a:hover{color:var(--ink);}
+.topbar .langsw a.lang-current{color:var(--ink); border-color:var(--line); background:var(--stone-raised);}
+.hero{max-width:920px; margin:0 auto; padding:3rem 1.4rem 1.6rem;}
+.hero .eyebrow{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--moss-deep); margin-bottom:.9rem;}
+.hero h1{font-size:2.4rem; line-height:1.12;}
+.hero p.lede{font-size:1.1rem; color:var(--ink-soft); max-width:660px; margin-top:.8rem;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 1.4rem 6rem; display:grid; grid-template-columns:220px 1fr; gap:2.6rem;}
+@media (max-width:880px){.wrap{grid-template-columns:1fr;} .rail{display:none;}}
+.rail{position:sticky; top:3.4rem; align-self:start; font-size:.84rem; max-height:calc(100vh - 4rem); overflow-y:auto; padding-bottom:2rem;}
+.rail h3{font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-weight:600; margin-bottom:.6rem;}
+.rail ul{list-style:none; margin:0 0 1.4rem; padding:0;}
+.rail li{margin-bottom:.35rem;}
+.rail a{color:var(--ink-soft); text-decoration:none;}
+.rail a:hover{color:var(--ink);}
+main > section{margin-bottom:3rem;}
+main > section > h2{font-size:1.45rem; border-bottom:1px solid var(--line); padding-bottom:.5rem; margin-bottom:1rem;}
+main > section > p.intro{color:var(--ink-soft); max-width:680px; margin-bottom:1.2rem;}
+.objectives{display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem 1.4rem; list-style:none; padding:0; margin:0;}
+@media (max-width:640px){.objectives{grid-template-columns:1fr;}}
+.objectives li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.6rem .8rem; font-size:.92rem;}
+.tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised);}
+table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px;}
+th,td{padding:.55rem .7rem; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:top;}
+thead th{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+tbody tr:last-child td{border-bottom:none;}
+td.dur{font-family:var(--font-mono); color:var(--ink-soft); white-space:nowrap; font-variant-numeric:tabular-nums;}
+.weekcard{border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised); padding:1.3rem 1.4rem; margin-bottom:1.6rem;}
+.weekcard .whead{display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap; margin-bottom:.3rem;}
+.weekcard .whead .wk{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--moss-deep); background:var(--stone-sunken); border:1px solid var(--line); padding:.15rem .55rem; border-radius:12px;}
+.weekcard h3{font-size:1.18rem; margin:0;}
+.weekcard .goal{color:var(--ink-soft); font-size:.93rem; margin:.3rem 0 1rem;}
+.deltas{font-size:.85rem; color:var(--ink-soft); margin-top:.9rem;}
+.deltas .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.callout{border-left:3px solid var(--ember); background:var(--stone-sunken); padding:.7rem .9rem; border-radius:0 var(--radius) var(--radius) 0; font-size:.9rem; margin-top:.9rem;}
+.callout .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.gate{border:1px solid var(--moss-deep); background:var(--stone-sunken); padding:1rem 1.1rem; border-radius:var(--radius); margin-top:1rem;}
+.gate .fl{font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--moss-deep); margin-bottom:.4rem; display:block;}
+.reslist{list-style:none; padding:0; margin:0; display:grid; gap:.7rem;}
+.reslist li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.7rem .9rem; font-size:.9rem;}
+.reslist .topic{font-weight:600; display:block; margin-bottom:.15rem;}
+footer{max-width:920px; margin:0 auto; padding:2rem 1.4rem 4rem; color:var(--ink-soft); font-size:.85rem; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;}
+</style>
+
+<div class="topbar">
+  <span class="mark"></span><strong>The Practice</strong>
+  <nav>
+    <a href="index-de.html">Übersicht</a>
+    <a href="exercises-de.html">Übungsbibliothek</a>
+    <a href="#" class="current">Monat 1</a>
+    <a href="month2-de.html">Monat 2</a>
+    <a href="month3-de.html">Monat 3</a>
+  </nav>
+  <div class="langsw" aria-label="Sprache">
+    <a href="month1.html">EN</a>
+    <a href="month1-fr.html">FR</a>
+    <a href="month1-de.html" class="lang-current">DE</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Monat 1 von 3 · Wochen 1–4</div>
+  <h1>Grundlagen</h1>
+  <p class="lede">Das Ziel dieses Monats ist nicht, zu beeindrucken. Es geht darum, die Grundbausteine zu installieren — Atmung, aktive Beweglichkeit, zwei Rumpfformen, vier Bodenpositionen —, aus denen jede spätere Fähigkeit zusammengesetzt wird. Alles hier ist bewusst konservativ angelegt.</p>
+</div>
+
+<div class="wrap">
+<nav class="rail" aria-label="Inhalt von Monat 1">
+  <h3>Inhalt</h3>
+  <ul>
+    <li><a href="#objectives">Technische Ziele</a></li>
+    <li><a href="#baseline">Ausgangsmessung</a></li>
+    <li><a href="#template">Trainingsvorlage</a></li>
+    <li><a href="#week1">Woche 1</a></li>
+    <li><a href="#week2">Woche 2</a></li>
+    <li><a href="#week3">Woche 3</a></li>
+    <li><a href="#week4">Woche 4</a></li>
+    <li><a href="#assess-end">Abschlussmessung des Monats</a></li>
+    <li><a href="#gate">Zugang zu Monat 2</a></li>
+    <li><a href="#resources">Ressourcen</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<section id="objectives">
+<h2>Technische Ziele — Monat 1</h2>
+<p class="intro">Bis zum Ende von Woche 4 solltest du Folgendes ruhig und mit normaler Atmung ausführen können — nicht als angestrengter Maximalversuch:</p>
+<ul class="objectives">
+<li>Einen unassistierten Deep Squat für 60s+ halten, Fersen unten</li>
+<li>Hollow Body und Arch Body je 30s halten, Extremitäten gestreckt</li>
+<li>Beast und Crab statisch für 20–30s halten, Hüfte auf gleicher Höhe</li>
+<li>3–5 Shin Box-Wechsel pro Seite ohne Hände ausführen</li>
+<li>Die vollständige CARs-Sequenz (Nacken, Schulter, Hüfte, Wirbelsäule) aus dem Gedächtnis durchführen</li>
+<li>Einbeinstand 30–45s pro Seite, Augen offen</li>
+<li>60s+ akkumulierte Gewichtsbelastung auf der flachen Hand (Handgelenk) tolerieren</li>
+<li>5 flüssige Fetal Rocks und 3 Log Rolls in jede Richtung ausführen</li>
+</ul>
+</section>
+
+<section id="baseline">
+<h2>Ausgangsmessung (vor Woche 1, Einheit 1 durchführen)</h2>
+<p class="intro">Halte diese Werte einmal ehrlich fest, vor jeglichem Training. Es geht nicht um eine Bewertung — dies ist der einzige Weg, nach vier Wochen zu wissen, ob das Programm wirkt. Dieselbe Testreihe wird am Ende jedes Monats wiederholt. Nutze das im Hub-Dokument beschriebene <a href="#journal">Bewegungstagebuch</a>-Format.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Test</th><th>Was du festhältst</th><th>Warum dieser Test</th></tr></thead>
+<tbody>
+<tr><td>Active Deep Squat Hold</td><td>Maximale Sekunden, Fersen unten, freihändig (vermerke, ob Hand-/Fersenunterstützung nötig war)</td><td>Zusammengesetzter Screen für aktive Beweglichkeit von Knöchel, Hüfte und Wirbelsäule</td></tr>
+<tr><td>Hollow Body Hold</td><td>Maximale Sekunden bis die Form zusammenbricht (gebeugt oder gestreckt angeben)</td><td>Ausgangswert für die vordere Kette / Rumpfkontrolle</td></tr>
+<tr><td>Arch Body Hold</td><td>Maximale Sekunden bis die Form zusammenbricht</td><td>Ausgangswert für die hintere Kette / Extensionskontrolle</td></tr>
+<tr><td>Shin Box Switch</td><td>Gelingt ein Wechsel freihändig? Ja/Nein, beliebige Seite</td><td>Aktive Innen-/Außenrotation der Hüfte</td></tr>
+<tr><td>Einbeinstand</td><td>Sekunden pro Seite, Augen offen</td><td>Ausgangswert für propriozeptive/vestibuläre Kontrolle</td></tr>
+<tr><td>Handgelenk-Gewichtsbelastung</td><td>Sekunden im Vierfüßlerstand auf flacher Hand bis zum Unbehagen</td><td>Belastungstoleranz der Handgelenksextension</td></tr>
+<tr><td>Sprunggelenk-Dorsalflexions-Rock</td><td>Bewerte 1–3: Ferse hebt sofort ab / hält kurz / bleibt über die gesamte Bewegung unten, je Seite</td><td>Prüfung auf Beweglichkeitsengpass im Sprunggelenk für Deep Squat &amp; Ape</td></tr>
+<tr><td>Schulter-CAR-Qualität</td><td>Selbstbewertung 1–5 für Flüssigkeit, vermerke etwaige "Blockadepunkte" im Kreis, je Seite</td><td>Ausgangskarte für aktive Schulterbeweglichkeit und Asymmetrien</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section id="template">
+<h2>Trainingsvorlage (~40 Minuten)</h2>
+<p class="intro">Jede Einheit in diesem Programm folgt derselben achtteiligen Struktur. Was sich von Woche zu Woche ändert, ist der Inhalt jedes Teils, nicht die Struktur — diese Konstanz ist beabsichtigt, damit deine Aufmerksamkeit der Bewegung gilt und nicht dem Merken des Formats.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Reihenfolge</th><th>Bestandteil</th><th>Zeit</th><th>Zweck</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Gelenkvorbereitung (CARs)</td><td class="dur">5 Min.</td><td>Verfügbaren Bewegungsraum aktiv abtasten und öffnen, bevor er belastet wird</td></tr>
+<tr><td>2</td><td>Atempraxis</td><td class="dur">3 Min.</td><td>Herunterregulieren, das unter Spannung genutzte Atemmuster etablieren</td></tr>
+<tr><td>3</td><td>Rumpf- &amp; Körpermittenkontrolle</td><td class="dur">6 Min.</td><td>Die Rumpfform installieren, von der sich alles andere ableitet</td></tr>
+<tr><td>4</td><td>Aktive Mobilität</td><td class="dur">7 Min.</td><td>Deep Squat / Shin Box / Konditionierung von Handgelenk &amp; Sprunggelenk</td></tr>
+<tr><td>5</td><td>Bodenfortbewegung</td><td class="dur">9 Min.</td><td>Beast, Crab, Ape und ihre Progressionen</td></tr>
+<tr><td>6</td><td>Balance</td><td class="dur">4 Min.</td><td>Progressive propriozeptive Herausforderung</td></tr>
+<tr><td>7</td><td>Angeleitete Erkundung</td><td class="dur">4 Min.</td><td>Unstrukturierte Bewegung nur mit dem bereits Trainierten</td></tr>
+<tr><td>8</td><td>Cool-down</td><td class="dur">3 Min.</td><td>Herunterfahren, kurzer Körper-Scan</td></tr>
+</tbody>
+</table></div>
+<p style="font-size:.85rem;color:var(--ink-soft);margin-top:.8rem;">Bei 2–3×/Woche Training: Behandle die drei unten stehenden Varianten (A/B/C) als rotierenden Zyklus — wiederhole A→B→C→A… unabhängig von der Kalenderwoche und wechsle einfach zur Tabelle der nächsten Woche, sobald eine vollständige Rotation abgeschlossen ist. Bei 4×/Woche Training verlängere die Bestandteile 5–7 jeweils um ein paar Minuten, um auf 45–60 Min. zu kommen.</p>
+</section>
+
+<section id="week1">
+<div class="weekcard" id="w1">
+<div class="whead"><span class="wk">Woche 1</span><h3>Die Formen erlernen</h3></div>
+<p class="goal"><strong>Wöchentliches Lernziel:</strong> lerne, wie sich jede Grundposition anfühlen soll — noch nicht, wie lange du sie halten kannst. Jeder Hold unten darf und soll assistiert oder verkürzt werden. Der einzige Fehler in dieser Woche ist Hetzen.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Bestandteil</th><th>Einheit A</th><th>Einheit B</th><th>Einheit C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 Min.)</td><td>Nacken- + Schulter-CARs, 2 Wdh./Richtung</td><td>Hüft- + Wirbelsäulen-CARs, 2 Wdh./Richtung</td><td>Vollständige Sequenz, 1 Wdh./Richtung je Gelenk</td></tr>
+<tr><td>Atmung (3 Min.)</td><td>Rückenlage, Zwerchfellatmung ×10</td><td>Rückenlage, Zwerchfellatmung ×10</td><td>Sitzend, Zwerchfellatmung ×10</td></tr>
+<tr><td>Core (6 Min.)</td><td>Hollow Body (Regression), 3×20s</td><td>Arch Body (Basisform), 3×20s</td><td>Hollow + Arch, je 2×20s</td></tr>
+<tr><td>Aktive Mobilität (7 Min.)</td><td>Deep Squat, handunterstützt, 3×30s; Handgelenk-CARs + Dehnung</td><td>Deep Squat, handunterstützt, 3×30s; Sprunggelenk-CARs</td><td>Deep Squat assistiert 2×45s; Shin Box statischer Halt beidseitig</td></tr>
+<tr><td>Fortbewegung (9 Min.)</td><td>Beast Basishalt, 4×15s</td><td>Crab Basishalt, 4×15s</td><td>Beast 3×15s + Crab 3×15s, abwechselnd</td></tr>
+<tr><td>Balance (4 Min.)</td><td>Einbeinstand, Augen offen, 3×20s/Seite</td><td>Einbeinstand, Augen offen, 3×20s/Seite</td><td>Einbeinstand, Augen offen, 3×25s/Seite</td></tr>
+<tr><td>Erkundung (4 Min.)</td><td>Freier Wechsel zwischen Squat / Kniestand / Sitzen, ohne Vorgabe</td><td>Langsames Krabbeln auf Händen und Knien, beliebige Richtung, ohne Regeln</td><td>Beides kombinieren — squatten, knien, krabbeln, frei</td></tr>
+<tr><td>Cool-down (3 Min.)</td><td>Kindposition + langsame Atmung</td><td>Sitzende Vorbeuge + langsame Atmung</td><td>Liegende Stille, Körper-Scan</td></tr>
+</tbody></table></div>
+<div class="callout"><span class="fl">Achte auf</span>Luftanhalten während Hollow-/Arch-/Beast-Holds. Angehaltener Atem ist das deutlichste Zeichen dafür, dass ein Hold über sein ehrliches Niveau hinausgegangen ist — verkürze ihn, statt dich durchzukämpfen.</div>
+</div>
+</section>
+
+<section id="week2">
+<div class="weekcard" id="w2">
+<div class="whead"><span class="wk">Woche 2</span><h3>Unterstützung abbauen</h3></div>
+<p class="goal"><strong>Wöchentliches Lernziel:</strong> beginne, die in Woche 1 eingeführten Krücken abzubauen — Handunterstützung im Squat, kurze Haltezeiten — bei gleichbleibender Qualität. Sinkt die Qualität, kommt die Krücke zurück; das ist kein Wettrennen.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Bestandteil</th><th>Einheit A</th><th>Einheit B</th><th>Einheit C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 Min.)</td><td>Vollständige Sequenz, 1–2 Wdh./Richtung</td><td>Vollständige Sequenz, 1–2 Wdh./Richtung</td><td>Vollständige Sequenz + Handgelenk-/Sprunggelenk-CARs ergänzt</td></tr>
+<tr><td>Atmung (3 Min.)</td><td>Sitzend, Zwerchfellatmung ×10</td><td>Zwerchfellatmung im Hollow-Body-Basishalt, ×8</td><td>Sitzend, Zwerchfellatmung ×10</td></tr>
+<tr><td>Core (6 Min.)</td><td>Hollow Body Basisform, 4×20s</td><td>Arch Body Basisform, 4×20s</td><td>Hollow + Arch, je 3×20s</td></tr>
+<tr><td>Aktive Mobilität (7 Min.)</td><td>Deep Squat, nur eine Hand, 3×30s; Handgelenk-Rocks (Stufe 3)</td><td>Deep Squat, unassistierter Versuch, 3×20s; Sprunggelenk-Rock (Stufe 2)</td><td>Shin Box statisch beidseitig, 3×20s; Deep Squat unassistiert 2×30s</td></tr>
+<tr><td>Fortbewegung (9 Min.)</td><td>Beast-Halt 3×20s + Loaded-Beast-Gewichtsverlagerungen 2×8</td><td>Crab-Halt 3×20s + sanfte Hüftverlagerungen 2×8</td><td>Beast 2×20s + Crab 2×20s + Loaded-Beast-Verlagerungen 1×8</td></tr>
+<tr><td>Balance (4 Min.)</td><td>Einbeinstand 3×30s/Seite</td><td>Einbeinstand + langsame Freibein-Kreise, 2×25s/Seite</td><td>Einbeinstand 3×30s/Seite</td></tr>
+<tr><td>Erkundung (4 Min.)</td><td>Nur über Beast, Squat, Kniestand bewegen — langsam verknüpfen</td><td>Nur über Crab, Sitzen, Squat bewegen — langsam verknüpfen</td><td>Freie Kombination aller bisher gelernten Formen</td></tr>
+<tr><td>Cool-down (3 Min.)</td><td>Deep-Squat-Ruheposition + Atmung</td><td>Kindposition + Atmung</td><td>Liegende Stille, Körper-Scan</td></tr>
+</tbody></table></div>
+<div class="deltas"><span class="fl">Änderung gegenüber Woche 1</span>Haltezeiten +5s, ein Handunterstützungspunkt im Deep Squat entfernt, Loaded-Beast-Gewichtsverlagerungen eingeführt.</div>
+</div>
+</section>
+
+<section id="week3">
+<div class="weekcard" id="w3">
+<div class="whead"><span class="wk">Woche 3</span><h3>Bewegung hinzufügen</h3></div>
+<p class="goal"><strong>Wöchentliches Lernziel:</strong> die statischen Holds beginnen sich zu bewegen. Shin Box bekommt seinen Wechsel, Crab bekommt seinen Walk, und Rollen wird mit dem geringstmöglichen Risiko eingeführt (Fetal Rock, Log Roll). Hier beginnen "Positionen", zu "Fortbewegung" zu werden.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Bestandteil</th><th>Einheit A</th><th>Einheit B</th><th>Einheit C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 Min.)</td><td>Vollständige Sequenz, 2 Wdh./Richtung</td><td>Vollständige Sequenz, 2 Wdh./Richtung</td><td>Vollständige Sequenz, 2 Wdh./Richtung</td></tr>
+<tr><td>Atmung (3 Min.)</td><td>Zwerchfellatmung ×8 in den Hollow-Body-Halt hinein</td><td>Zwerchfellatmung ×8 in den Arch-Body-Halt hinein</td><td>Zwerchfellatmung ×10 sitzend</td></tr>
+<tr><td>Core (6 Min.)</td><td>Hollow Body, ein Bein gestreckt, 3×20s/Seite</td><td>Arch Body, gestreckter Halt, 3×25s</td><td>Dead Bug 2×8/Seite + Hollow 2×20s</td></tr>
+<tr><td>Aktive Mobilität (7 Min.)</td><td>Deep Squat unassistiert 3×40s + Gewichtsverlagerungen</td><td>Shin Box-Wechsel, langsam, 3×3/Seite</td><td>Deep Squat 2×40s + Shin Box-Wechsel 2×3/Seite</td></tr>
+<tr><td>Fortbewegung (9 Min.)</td><td>Beast 2×20s + Loaded-Beast-Verlagerungen 2×10</td><td>Crab-Halt 2×20s + Crab Walk, 3×4 Schritte</td><td>Beast- + Crab-Halt je 1×20s + Crab Walk 2×4 Schritte</td></tr>
+<tr><td>Balance (4 Min.)</td><td>Einbeinstand, Augen geschlossen, 3×15s/Seite (in Wandnähe absichern)</td><td>Einbeinstand + Reach, 3×20s/Seite</td><td>Einbeinstand Augen geschlossen 2×15s + Reach 2×20s</td></tr>
+<tr><td>Erkundung (4 Min.)</td><td>Fetal Rock ×8 + Log Roll ×3/Richtung</td><td>Freie Bodenerkundung: Squat–Kniestand–Sitzen–Beast, selbst gewählte Reihenfolge</td><td>Fetal Rock + Log Roll, dann freie Erkundung</td></tr>
+<tr><td>Cool-down (3 Min.)</td><td>Liegende Stille, Atem-Countdown</td><td>Sitzende Vorbeuge + Atmung</td><td>Kindposition + Atmung</td></tr>
+</tbody></table></div>
+<div class="deltas"><span class="fl">Änderung gegenüber Woche 2</span>Shin Box wird dynamisch (Wechsel), Crab wird dynamisch (Walk), Rollen wird eingeführt, Balance ergänzt Varianten mit geschlossenen Augen und Reach.</div>
+<div class="callout"><span class="fl">Achte auf</span>Bei Fetal Rock / Log Roll: jegliches Gewicht, das auf dem Kopf landet, oder Nackenbelastung — Kinn angezogen halten und auf weichem, freigeräumtem Bodenbereich bleiben.</div>
+</div>
+</section>
+
+<section id="week4">
+<div class="weekcard" id="w4">
+<div class="whead"><span class="wk">Woche 4</span><h3>Konsolidierung</h3></div>
+<p class="goal"><strong>Wöchentliches Lernziel:</strong> kein neuer Stoff. Diese Woche dreht sich ganz darum, das Gelernte zu glätten und dich auf den erneuten Test vorzubereiten. Die Einheiten sind etwas kürzer, um Raum für die Abschlussmessung des Monats als vierte, separate Einheit zu lassen, falls nötig.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Bestandteil</th><th>Einheit A</th><th>Einheit B</th><th>Einheit C</th></tr></thead>
+<tbody>
+<tr><td>CARs (5 Min.)</td><td>Vollständige Sequenz, Qualitätsfokus auf dem schwächsten Gelenk aus der Ausgangsmessung</td><td>Vollständige Sequenz</td><td>Vollständige Sequenz</td></tr>
+<tr><td>Atmung (3 Min.)</td><td>Zwerchfellatmung ×10</td><td>Zwerchfellatmung ×10</td><td>Zwerchfellatmung ×10</td></tr>
+<tr><td>Core (6 Min.)</td><td>Hollow + Arch, gestreckt, je 3×25s</td><td>Hollow + Arch, gestreckt, je 3×25s</td><td>Dead Bug 2×8/Seite + Hollow/Arch je 2×25s</td></tr>
+<tr><td>Aktive Mobilität (7 Min.)</td><td>Deep Squat unassistiert 3×45–60s</td><td>Shin Box-Wechsel 3×5/Seite</td><td>Deep Squat + Shin Box im kombinierten Flow</td></tr>
+<tr><td>Fortbewegung (9 Min.)</td><td>Beast + Loaded Beast, 3×20s Halt + 10 Verlagerungen</td><td>Crab + Crab Walk, 3×20s Halt + 6 Schritte</td><td>Beast + Crab kombiniert, Halts und leichte Bewegung</td></tr>
+<tr><td>Balance (4 Min.)</td><td>Einbeinstand Augen geschlossen, 3×20s/Seite</td><td>Einbeinstand + Reach + Augen geschlossen, gemischt</td><td>Einbeinstand im Retest-Stil, beide Varianten</td></tr>
+<tr><td>Erkundung (4 Min.)</td><td>Freier Fluss mit allem, was diesen Monat gelernt wurde</td><td>Freier Fluss mit allem, was diesen Monat gelernt wurde</td><td>Freier Fluss — beachte, was sich automatisch anfühlt und was noch Mühe kostet</td></tr>
+<tr><td>Cool-down (3 Min.)</td><td>Körper-Scan + Atmung</td><td>Körper-Scan + Atmung</td><td>Körper-Scan + Atmung</td></tr>
+</tbody></table></div>
+</div>
+</section>
+
+<section id="assess-end">
+<h2>Abschlussmessung des Monats (Woche-0-Testreihe wiederholen)</h2>
+<p class="intro">Führe dieselbe Ausgangs-Testreihe wie am Anfang dieses Dokuments durch. Trage dieselben acht Werte direkt unter dem Woche-0-Eintrag in dein Tagebuch ein, sodass sie nebeneinanderstehen. Du suchst nach der Richtung der Veränderung, nicht nach Perfektion — ein Hollow-Body-Halt, der von 12s auf 24s steigt, zählt mehr als jede bestimmte Zielzahl.</p>
+<div class="gate" id="gate">
+<span class="fl">Zugangskriterien — bereit für Monat 2</span>
+<p style="margin:0 0 .6rem;">Nicht jeder Wert muss perfekt sein, aber du solltest mindestens 6 dieser 8 Punkte mit Ja beantworten können, bevor du weitermachst. Liegst du darunter, wiederhole Woche 3–4 für eine weitere Woche, statt mit einer wackligen Basis in Monat 2 zu starten — die Fortbewegungs- und Übergangsarbeit dort belastet genau diese Qualitäten.</p>
+<ul style="margin:0; padding-left:1.2rem; font-size:.92rem;">
+<li>Deep Squat unassistiert, Fersen unten, 45s+</li>
+<li>Hollow Body gestreckt, 25s+</li>
+<li>Arch Body gestreckt, 25s+</li>
+<li>Beast statischer Halt, 20s+, Hüfte auf gleicher Höhe</li>
+<li>Crab statischer Halt, 20s+, Hüfte auf gleicher Höhe</li>
+<li>Shin Box-Wechsel, beide Richtungen, freihändig</li>
+<li>Einbeinbalance Augen offen, 30s+ pro Seite</li>
+<li>Keine Schmerzen in Handgelenken oder Sprunggelenken bei allem oben Genannten</li>
+</ul>
+</div>
+</section>
+
+<section id="resources">
+<h2>Weiterführende Ressourcen — Monat 1</h2>
+<p class="intro">Optional, aber empfohlen. Sie bauen die konzeptionelle Landkarte unter der körperlichen Praxis auf — nützlich für analytisch veranlagte Lernende.</p>
+<ul class="reslist">
+<li><span class="topic">Functional Range Conditioning — das Konzept der CARs</span>Suche nach "FRC CARs" (Dr. Andreo Spina). Lies vor Woche 1 über den Unterschied zwischen aktiver und passiver Beweglichkeit — das rahmt jede Gelenkvorbereitungsübung in diesem Programm von "Dehnen" zu "Training" um.</li>
+<li><span class="topic">Ido Portal — Interviews/Vorträge zur "Movement Culture"-Philosophie</span>Ein beliebiges längeres Interview (Podcast oder YouTube). Achte darauf, wie er Bodenarbeit und den Deep Squat als menschliche Grundpositionen rahmt, nicht als Aufwärmübungen.</li>
+<li><span class="topic">Animal Flow — Grundlagen zu Beast &amp; Crab</span>Offizielle Animal-Flow-Lehrinhalte zur "Form Wave" (Beast/Crab/Ape/Scorpion-Familie) bieten eine nützliche visuelle Referenz für Hüft-/Schulterausrichtung in diesen Holds.</li>
+<li><span class="topic">Propriozeption &amp; Interozeption — eine kurze Einführung</span>Ein beliebiger einführender Artikel zu Propriozeption (dem Sinn für Gelenkstellung/-bewegung) und Interozeption (dem Sinn für den inneren Körperzustand). Dieses Programm trainiert beides, und sie zu benennen hilft dir, während eines Holds bewusster wahrzunehmen, was du tatsächlich spürst.</li>
+</ul>
+</section>
+
+</main>
+</div>
+
+<footer>
+<span><a href="index-de.html">← Übersicht</a> · <a href="exercises-de.html">Übungsbibliothek</a></span>
+<span>Weiter: <a href="month2-de.html">Monat 2 — Fortbewegung &amp; Übergänge →</a></span>
+</footer>
+
+<button id="themeToggle" type="button" aria-label="Hellen oder dunklen Modus umschalten" title="Hell/Dunkel umschalten">
+  <span aria-hidden="true">◐</span>
+</button>
+<style>
+#themeToggle{position:fixed;right:1rem;bottom:1rem;z-index:50;width:2.6rem;height:2.6rem;
+ border-radius:50%;border:1px solid var(--line);background:var(--stone-raised);color:var(--ink);
+ font-size:1.1rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);
+ display:flex;align-items:center;justify-content:center;}
+#themeToggle:hover{border-color:var(--moss);}
+#themeToggle:focus-visible{outline:2px solid var(--ember);outline-offset:3px;}
+@media print{#themeToggle{display:none;}}
+</style>
+<script>
+(function(){
+  var root=document.documentElement, KEY='practice-theme';
+  try{var s=localStorage.getItem(KEY); if(s){root.setAttribute('data-theme',s);}}catch(e){}
+  var b=document.getElementById('themeToggle');
+  b&&b.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem(KEY,next);}catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Pratique — Un système d'apprentissage du mouvement</title>
+</head>
+<body>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+img{max-width:100%;height:auto;}
+
+:root{
+  --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC;
+  --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49;
+  --ember:#8C4E2C; --ember-deep:#743E22;
+  --line:#C9C3AC; --line-soft:#D8D3BE;
+  --spine:var(--moss);
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+  --radius:3px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+}
+:root[data-theme="dark"]{ --stone:#1B1E17; --stone-raised:#242820; --stone-sunken:#20231C; --ink:#E9E5D5; --ink-soft:#B7B3A0;
+  --moss:#8FA66B; --moss-deep:#6C7F49; --moss-bright:#A7BE82; --ember:#C97A4E; --ember-deep:#A85F38; --line:#3A3F32; --line-soft:#2C3026; }
+:root[data-theme="light"]{ --stone:#ECE8DA; --stone-raised:#DFDBC9; --stone-sunken:#E1DDCC; --ink:#20231C; --ink-soft:#4B4F42;
+  --moss:#4E5D38; --moss-deep:#3C4A2B; --moss-bright:#6C7F49; --ember:#8C4E2C; --ember-deep:#743E22; --line:#C9C3AC; --line-soft:#D8D3BE; }
+*{box-sizing:border-box;}
+body{margin:0; background:var(--stone); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.6;}
+a{color:var(--moss-deep); text-decoration-color:var(--line);}
+@media (prefers-color-scheme:dark){a{color:var(--moss-bright);}}
+:root[data-theme="dark"] a{color:var(--moss-bright);}
+a:focus-visible{outline:2px solid var(--ember); outline-offset:3px;}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0 0 .4em;}
+.topbar{position:sticky; top:0; z-index:20; background:var(--stone); border-bottom:1px solid var(--line); display:flex; align-items:center; gap:.9rem; padding:.65rem 1.4rem; font-size:.82rem; flex-wrap:wrap;}
+.topbar .mark{width:9px;height:9px;border-radius:50%;background:var(--spine); flex:none;}
+.topbar strong{font-family:var(--font-display); font-size:.95rem;}
+.topbar nav{display:flex; gap:1.1rem; margin-left:auto; flex-wrap:wrap;}
+.topbar nav a{color:var(--ink-soft); text-decoration:none; border-bottom:1px solid transparent;}
+.topbar nav a:hover, .topbar nav a.current{color:var(--ink); border-bottom-color:var(--spine);}
+.topbar .langsw{display:flex; gap:.35rem; font-size:.78rem;}
+.topbar .langsw a{color:var(--ink-soft); text-decoration:none; padding:.15rem .4rem; border:1px solid transparent; border-radius:3px;}
+.topbar .langsw a:hover{color:var(--ink);}
+.topbar .langsw a.lang-current{color:var(--ink); border-color:var(--line); background:var(--stone-raised);}
+.hero{max-width:760px; margin:0 auto; padding:4rem 1.4rem 2.2rem;}
+.hero .eyebrow{font-family:var(--font-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--moss-deep); margin-bottom:1rem;}
+.hero h1{font-size:2.7rem; line-height:1.08;}
+.hero p.lede{font-size:1.18rem; color:var(--ink-soft); margin-top:1rem;}
+.hero .startlinks{display:flex; gap:.7rem; margin-top:1.6rem; flex-wrap:wrap;}
+.startlinks a{font-size:.88rem; text-decoration:none; border:1px solid var(--line); padding:.5rem .9rem; border-radius:20px; color:var(--ink);}
+.startlinks a.primary{background:var(--moss-deep); border-color:var(--moss-deep); color:var(--stone);}
+:root[data-theme="dark"] .startlinks a.primary, @media (prefers-color-scheme:dark){.startlinks a.primary{color:var(--ground,#1B1E17);}}
+.startlinks a:hover{border-color:var(--moss);}
+.wrap{max-width:1180px; margin:0 auto; padding:0 1.4rem 6rem; display:grid; grid-template-columns:220px 1fr; gap:2.6rem;}
+@media (max-width:880px){.wrap{grid-template-columns:1fr;} .rail{display:none;}}
+.rail{position:sticky; top:3.4rem; align-self:start; font-size:.84rem; max-height:calc(100vh - 4rem); overflow-y:auto; padding-bottom:2rem;}
+.rail h3{font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); font-weight:600; margin-bottom:.6rem;}
+.rail ul{list-style:none; margin:0 0 1.4rem; padding:0;}
+.rail li{margin-bottom:.35rem;}
+.rail a{color:var(--ink-soft); text-decoration:none;}
+.rail a:hover{color:var(--ink);}
+main{max-width:900px;}
+main > section{margin-bottom:3.4rem;}
+main > section > h2{font-size:1.5rem; border-bottom:1px solid var(--line); padding-bottom:.5rem; margin-bottom:1rem;}
+main > section > p.intro{color:var(--ink-soft); margin-bottom:1.2rem;}
+main p{max-width:66ch;}
+.pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:1.4rem 0;}
+@media (max-width:700px){.pillars{grid-template-columns:1fr;}}
+.pillar{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem;}
+.pillar h4{font-size:.95rem; margin-bottom:.35rem;}
+.pillar p{font-size:.88rem; color:var(--ink-soft); margin:0;}
+.docgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-top:1.4rem;}
+@media (max-width:700px){.docgrid{grid-template-columns:1fr;}}
+.doccard{border:1px solid var(--line); background:var(--stone-raised); border-radius:var(--radius); padding:1.1rem 1.2rem; text-decoration:none; color:var(--ink); display:block;}
+.doccard:hover{border-color:var(--moss);}
+.doccard .dc-eyebrow{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--moss-deep); display:block; margin-bottom:.3rem;}
+.doccard h4{font-size:1.05rem; margin-bottom:.3rem;}
+.doccard p{font-size:.86rem; color:var(--ink-soft); margin:0;}
+.roadmap{display:grid; grid-template-columns:repeat(4,1fr); gap:.9rem; align-items:start;}
+@media (max-width:880px){.roadmap{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.roadmap{grid-template-columns:1fr;}}
+.tiercol{display:flex; flex-direction:column; gap:.55rem;}
+.tiercol .tierhead{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); padding-bottom:.4rem; border-bottom:2px solid var(--line); margin-bottom:.2rem;}
+.node{border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised); padding:.55rem .7rem; font-size:.82rem; position:relative; padding-left:.85rem;}
+.node::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:2px 0 0 2px;}
+.tiercol.t0 .node::before{background:var(--line);}
+.tiercol.t1 .node::before{background:var(--moss-deep);}
+.tiercol.t2 .node::before{background:var(--moss);}
+.tiercol.t3 .node::before{background:var(--ember);}
+.node .n-name{font-weight:600; display:block;}
+.node .n-from{color:var(--ink-soft); font-size:.76rem; display:block; margin-top:.15rem;}
+dl.glossary{margin:0;}
+dl.glossary dt{font-family:var(--font-display); font-weight:600; font-size:1rem; margin-top:1.1rem; color:var(--moss-deep);}
+:root[data-theme="dark"] dl.glossary dt{color:var(--moss-bright);}
+dl.glossary dd{margin:.25rem 0 0; font-size:.94rem; max-width:64ch;}
+.journalblock{border:1px solid var(--line); background:var(--stone-raised); border-radius:var(--radius); padding:1.2rem 1.3rem; margin-top:1rem;}
+.journalblock h4{font-size:1rem; margin-bottom:.5rem;}
+.tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--stone-raised); margin-top:.8rem;}
+table{border-collapse:collapse; width:100%; font-size:.85rem; min-width:520px;}
+th,td{padding:.5rem .65rem; border-bottom:1px solid var(--line-soft); text-align:left; vertical-align:top;}
+thead th{font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); border-bottom:1px solid var(--line);}
+tbody tr:last-child td{border-bottom:none;}
+.callout{border-left:3px solid var(--ember); background:var(--stone-sunken); padding:.7rem .9rem; border-radius:0 var(--radius) var(--radius) 0; font-size:.9rem; margin-top:.9rem;}
+.callout .fl{font-family:var(--font-mono); font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ember); display:block; margin-bottom:.3rem;}
+.reslist{list-style:none; padding:0; margin:0; display:grid; gap:.7rem;}
+.reslist li{background:var(--stone-raised); border:1px solid var(--line); border-radius:var(--radius); padding:.7rem .9rem; font-size:.9rem;}
+.reslist .topic{font-weight:600; display:block; margin-bottom:.15rem;}
+footer{max-width:900px; margin:0 auto; padding:2rem 1.4rem 4rem; color:var(--ink-soft); font-size:.85rem; border-top:1px solid var(--line);}
+</style>
+
+<div class="topbar">
+  <span class="mark"></span><strong>The Practice</strong>
+  <nav>
+    <a href="#" class="current">Accueil</a>
+    <a href="exercises-fr.html">Bibliothèque d'exercices</a>
+    <a href="month1-fr.html">Mois 1</a>
+    <a href="month2-fr.html">Mois 2</a>
+    <a href="month3-fr.html">Mois 3</a>
+  </nav>
+  <div class="langsw" aria-label="Langue">
+    <a href="index.html">EN</a>
+    <a href="index-fr.html" class="lang-current">FR</a>
+    <a href="index-de.html">DE</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Un système d'apprentissage du mouvement</div>
+  <h1>The Practice</h1>
+  <p class="lede">Un programme fondamental de 12 semaines consacré au mouvement au sol, à la mobilité et au contrôle corporel — puisant dans la Movement Culture, l'Animal Flow, le Functional Range Conditioning, la gymnastique au poids du corps, GMB et MovNat. Conçu comme un arbre de compétences avec prérequis et portes de maîtrise, pas comme un calendrier d'entraînement.</p>
+  <div class="startlinks">
+    <a class="primary" href="month1-fr.html">Commencer : Mois 1 →</a>
+    <a href="exercises-fr.html">Bibliothèque d'exercices</a>
+  </div>
+</div>
+
+<div class="wrap">
+<nav class="rail" aria-label="Sommaire du Hub">
+  <h3>Sommaire</h3>
+  <ul>
+    <li><a href="#philosophy">Philosophie</a></li>
+    <li><a href="#how">Comment le système s'articule</a></li>
+    <li><a href="#roadmap">Feuille de route des compétences motrices</a></li>
+    <li><a href="#assessment">Le système d'évaluation</a></li>
+    <li><a href="#glossary">Glossaire</a></li>
+    <li><a href="#journal">Journal de mouvement</a></li>
+    <li><a href="#resources">Ressources générales</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<section id="philosophy">
+<h2>Philosophie</h2>
+<p class="intro">Ce programme est construit comme le ferait un coach de Movement Culture : non pas autour d'exercices, mais autour de qualités — les capacités physiques et perceptives brutes dont toute compétence finit par être faite. Le handstand n'est pas ici un « objectif » ; c'est une expression tardive du contrôle en Hollow Body, de la tolérance du poignet et de l'équilibre inversé, tous entraînés séparément, des mois ou des années avant que la forme elle-même n'ait d'importance.</p>
+<div class="pillars">
+<div class="pillar"><h4>L'adaptabilité avant la performance</h4><p>L'objectif est un corps capable d'improviser une solution face à un problème de mouvement inédit — pas un corps capable d'atteindre un chiffre. Les séances se terminent par une exploration libre précisément pour cette raison.</p></div>
+<div class="pillar"><h4>La qualité avant la quantité</h4><p>Quinze secondes de maintien en Hollow Body avec une respiration continue et le bas du dos plat valent plus que quarante secondes tremblantes en apnée. Chaque dosage de ce programme suppose que vous choisirez la qualité plutôt que le chiffre écrit lorsqu'ils entrent en conflit.</p></div>
+<div class="pillar"><h4>L'intelligence corporelle avant les métriques</h4><p>La proprioception — savoir où se trouve son corps sans regarder — est entraînée avec autant d'intention que la force. Les progressions d'équilibre, les CARs lentes et le temps d'exploration existent précisément pour construire ce sens, qu'aucun nombre de répétitions ne peut capturer.</p></div>
+</div>
+<p>Rien ici ne se mesure en calories, en volume musculaire ou en « intensité ». Les seuls ennemis de cette pratique sont la précipitation et le forçage — aller plus vite que ce que votre contrôle permet, ou franchir en force une amplitude que vous n'avez pas réellement gagnée.</p>
+</section>
+
+<section id="how">
+<h2>Comment le système s'articule</h2>
+<p class="intro">Quatre documents, une seule pratique. Lisez-les dans cet ordre la première fois ; ensuite, la Bibliothèque d'exercices devient votre référence quotidienne.</p>
+<div class="docgrid">
+<a class="doccard" href="month1-fr.html"><span class="dc-eyebrow">Semaines 1–4</span><h4>Mois 1 — Fondations</h4><p>Respiration, CARs, Hollow/Arch, Deep Squat, Beast, Crab, Shin Box. Bilan initial + évaluation de fin de mois.</p></a>
+<a class="doccard" href="month2-fr.html"><span class="dc-eyebrow">Semaines 5–8</span><h4>Mois 2 — Locomotion et transitions</h4><p>Beast Crawl, Ape, Crab Walk, Sit-Through, Get-Up, rolling, préparation du headstand au mur.</p></a>
+<a class="doccard" href="month3-fr.html"><span class="dc-eyebrow">Semaines 9–12</span><h4>Mois 3 — Intégration</h4><p>Scorpion, rolling continu, flows construits par vous-même, Headstand Hold, Wall Handstand Prep, évaluation finale.</p></a>
+<a class="doccard" href="exercises-fr.html"><span class="dc-eyebrow">Référence</span><h4>Bibliothèque d'exercices et de compétences</h4><p>Chaque position et chaque schème : mise en place, repères, justification, erreurs, critères de maîtrise, signes de progression.</p></a>
+</div>
+<div class="callout"><span class="fl">Sur la fréquence</span>Les plans sont écrits pour 3 séances/semaine d'environ 40 minutes (un cycle rotatif A/B/C, non lié à des jours fixes du calendrier) — ce qui correspond à un rythme réaliste de 2 à 3×/semaine. Si vous ne parvenez à faire que 2 séances dans une semaine, continuez simplement à faire tourner le cycle et laissez les 12 semaines s'étirer sur 14 à 16 semaines calendaires ; les tableaux et les portes de passage ne changent pas. Si vous avez plus de temps, prolongez les composantes 5 à 7 (locomotion, équilibre, exploration) pour remplir 45 à 60 minutes plutôt que d'ajouter du nouveau contenu.</div>
+</section>
+
+<section id="roadmap">
+<h2>Feuille de route des compétences motrices</h2>
+<p class="intro">Chaque compétence appartient à un palier, et chaque nœud indique ce sur quoi il repose. Lisez de gauche à droite : les primitives du Palier 0 sont entraînées dès le premier jour et ne s'arrêtent jamais ; chaque palier suivant se débloque grâce au palier précédent, pas en fonction de la semaine du calendrier. Si vous n'êtes pas sûr d'être prêt pour quelque chose, vérifiez sur quoi ça repose — si ce n'est pas encore solide, c'est là qu'il faut revenir.</p>
+<div class="roadmap">
+<div class="tiercol t0">
+<div class="tierhead">Palier 0 — Primitives</div>
+<div class="node"><span class="n-name">Respiration diaphragmatique</span><span class="n-from">fondamental — aucun prérequis</span></div>
+<div class="node"><span class="n-name">CARs (toutes les articulations)</span><span class="n-from">fondamental</span></div>
+<div class="node"><span class="n-name">Préparation des poignets</span><span class="n-from">fondamental</span></div>
+<div class="node"><span class="n-name">Préparation des chevilles</span><span class="n-from">fondamental</span></div>
+<div class="node"><span class="n-name">Dead Bug / Bird-Dog</span><span class="n-from">à partir de : respiration</span></div>
+</div>
+<div class="tiercol t1">
+<div class="tierhead">Palier 1 — Fondations</div>
+<div class="node"><span class="n-name">Hollow Body</span><span class="n-from">à partir de : respiration, CARs</span></div>
+<div class="node"><span class="n-name">Arch Body</span><span class="n-from">à partir de : respiration, CARs</span></div>
+<div class="node"><span class="n-name">Deep Squat</span><span class="n-from">à partir de : CARs cheville/hanche</span></div>
+<div class="node"><span class="n-name">Shin Box / 90-90</span><span class="n-from">à partir de : CARs hanche</span></div>
+<div class="node"><span class="n-name">Beast (statique)</span><span class="n-from">à partir de : préparation poignets, Hollow Body</span></div>
+<div class="node"><span class="n-name">Crab (statique)</span><span class="n-from">à partir de : préparation poignets, Arch Body</span></div>
+<div class="node"><span class="n-name">Rocking (Log/Fetal)</span><span class="n-from">à partir de : Hollow/Arch Body</span></div>
+<div class="node"><span class="n-name">Équilibre — position statique</span><span class="n-from">fondamental, affiné ici</span></div>
+</div>
+<div class="tiercol t2">
+<div class="tierhead">Palier 2 — Locomotion</div>
+<div class="node"><span class="n-name">Loaded Beast</span><span class="n-from">à partir de : Beast</span></div>
+<div class="node"><span class="n-name">Ape / Traveling Ape</span><span class="n-from">à partir de : Deep Squat, préparation poignets</span></div>
+<div class="node"><span class="n-name">Beast Crawl</span><span class="n-from">à partir de : Loaded Beast, Dead Bug</span></div>
+<div class="node"><span class="n-name">Crab Walk</span><span class="n-from">à partir de : Crab</span></div>
+<div class="node"><span class="n-name">Sit-Through</span><span class="n-from">à partir de : Beast, Crab</span></div>
+<div class="node"><span class="n-name">Get-Up (semi-agenouillé)</span><span class="n-from">à partir de : Deep Squat, Shin Box</span></div>
+<div class="node"><span class="n-name">Rolling — Étape 1–2</span><span class="n-from">à partir de : Rocking, Hollow/Arch</span></div>
+<div class="node"><span class="n-name">Headstand Prep</span><span class="n-from">à partir de : Hollow Body, préparation poignets</span></div>
+<div class="node"><span class="n-name">Wall Handstand Prep — phase initiale</span><span class="n-from">à partir de : Hollow Body, préparation poignets</span></div>
+<div class="node"><span class="n-name">Équilibre — yeux fermés</span><span class="n-from">à partir de : position statique</span></div>
+</div>
+<div class="tiercol t3">
+<div class="tierhead">Palier 3 — Intégration</div>
+<div class="node"><span class="n-name">Scorpion</span><span class="n-from">à partir de : Arch Body, Sit-Through, CARs rachis</span></div>
+<div class="node"><span class="n-name">Rolling — continu</span><span class="n-from">à partir de : Rolling étape 1–2</span></div>
+<div class="node"><span class="n-name">Get-Up — multidirectionnel</span><span class="n-from">à partir de : Get-Up semi-agenouillé</span></div>
+<div class="node"><span class="n-name">Headstand Hold</span><span class="n-from">à partir de : Headstand Prep</span></div>
+<div class="node"><span class="n-name">Wall Handstand — maintien complet</span><span class="n-from">à partir de : Wall Handstand Prep — phase initiale</span></div>
+<div class="node"><span class="n-name">Flows autocomposés</span><span class="n-from">à partir de : toute la locomotion des Paliers 1–2</span></div>
+<div class="node"><span class="n-name">Équilibre — surface instable</span><span class="n-from">à partir de : yeux fermés</span></div>
+<div class="node"><span class="n-name">Hanging Prep <em>(optionnel)</em></span><span class="n-from">branche indépendante — nécessite une barre</span></div>
+</div>
+</div>
+<p style="margin-top:1.2rem;">Le détail complet de chaque nœud — mise en place, repères, erreurs fréquentes et critères de maîtrise objectifs — se trouve dans la <a href="exercises-fr.html">Bibliothèque d'exercices</a>.</p>
+</section>
+
+<section id="assessment">
+<h2>Le système d'évaluation</h2>
+<p class="intro">La même batterie de tests se répète à quatre points de contrôle : avant la Semaine 1 (bilan initial), fin du Mois 1, fin du Mois 2, et fin du Mois 3 (bilan final). Chaque document de Mois contient la batterie exacte pour ce point de contrôle, ainsi qu'une porte de passage — une courte liste de critères indiquant que vous êtes prêt pour le palier suivant, plutôt que d'avoir simplement « fait » les semaines.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Point de contrôle</th><th>Où</th><th>Objectif principal</th></tr></thead>
+<tbody>
+<tr><td>Bilan initial</td><td>Mois 1, avant la Semaine 1</td><td>Point de départ honnête — rien à comparer encore, juste un relevé</td></tr>
+<tr><td>Fin du Mois 1</td><td>Mois 1, Semaine 4</td><td>Confirme que les statiques du Palier 1 sont assez solides pour être chargées dynamiquement au Mois 2</td></tr>
+<tr><td>Fin du Mois 2</td><td>Mois 2, Semaine 8</td><td>Confirme que les schèmes de locomotion sont assez fluides pour être combinés au Mois 3</td></tr>
+<tr><td>Bilan final</td><td>Mois 3, Semaine 12</td><td>Photographie complète du système — la direction du changement à travers les quatre points de contrôle compte plus que n'importe quel chiffre isolé</td></tr>
+</tbody></table></div>
+<p>Les critères de passage sont volontairement souples (environ 75 % des critères listés, pas 100 %) — l'objectif est de repérer une base réellement insuffisante avant de la charger davantage, pas de filtrer par perfectionnisme. En cas de doute, une semaine supplémentaire sur le même contenu est toujours le choix le plus sûr plutôt que d'avancer.</p>
+</section>
+
+<section id="glossary">
+<h2>Glossaire</h2>
+<p class="intro">Termes utilisés dans les quatre documents, définis une fois ici.</p>
+<dl class="glossary">
+<dt>Mobilité</dt><dd>La combinaison de l'amplitude de mouvement et du contrôle nécessaire pour utiliser cette amplitude par sa propre force — à distinguer de la flexibilité, qui ne décrit que l'amplitude passive.</dd>
+<dt>Amplitude de mouvement active (AROM)</dt><dd>La distance qu'une articulation peut parcourir par son seul effort musculaire, sans aide extérieure. C'est ce que les CARs entraînent et mesurent.</dd>
+<dt>Amplitude de mouvement passive (PROM)</dt><dd>La distance qu'une articulation peut parcourir avec une aide extérieure (une main, la gravité, un mur). Un grand écart entre la PROM et l'AROM d'une articulation est une faiblesse spécifique et entraînable, pas simplement une « raideur ».</dd>
+<dt>Stabilité</dt><dd>La capacité à contrôler ou à résister à un mouvement indésirable au niveau d'une articulation — la majeure partie du travail de « core » de ce programme est de la stabilité du tronc : garder la colonne immobile pendant que les membres se déplacent.</dd>
+<dt>Proprioception</dt><dd>Le sens de la position des parties du corps dans l'espace, sans les regarder. Entraîné explicitement par les CARs, les progressions d'équilibre et le travail yeux fermés.</dd>
+<dt>Intéroception</dt><dd>Le sens de l'état corporel interne — respiration, fréquence cardiaque, tension, fatigue. La pratique de la respiration et les retours au calme l'entraînent directement.</dd>
+<dt>Coordination</dt><dd>La capacité du système nerveux à séquencer et synchroniser plusieurs parties du corps vers un même résultat — ce que Beast Crawl et Get-Up entraînent fondamentalement.</dd>
+<dt>Locomotion</dt><dd>Déplacer tout le corps au sol par sa propre force — Beast Crawl, Ape, Crab Walk et Sit-Through sont tous des schèmes de locomotion.</dd>
+<dt>Controlled Articular Rotations (CARs)</dt><dd>La rotation la plus lente possible, entièrement autogénérée, d'une articulation dans toute son amplitude disponible — voir la section Préparation articulaire de la Bibliothèque d'exercices pour la méthode complète.</dd>
+<dt>PAILs / RAILs</dt><dd>Progressive/Regressive Angular Isometric Loading — une méthode FRC de force en fin d'amplitude, un niveau au-delà des CARs. Mentionné dans la section « Après la Semaine 12 » du Mois 3 comme étape suivante, non entraîné directement dans ce programme.</dd>
+<dt>Schème de compensation</dt><dd>Un mouvement de substitution que le corps utilise pour simuler une amplitude ou une force qu'il n'a pas réellement (par exemple, cambrer le bas du dos pour donner l'impression de squatter plus bas). Nommé explicitement sous « Erreurs fréquentes » pour chaque compétence de la Bibliothèque.</dd>
+<dt>Contralatéral / Ipsilatéral</dt><dd>Contralatéral = des membres de côtés opposés qui se déplacent ensemble (main droite, genou gauche) — le schème de Beast Crawl et Crab Walk. Ipsilatéral = des membres du même côté ensemble.</dd>
+<dt>Chaîne fermée / Chaîne ouverte</dt><dd>Chaîne fermée : l'extrémité du membre (main ou pied) est fixée au sol (Beast, Crab, Deep Squat). Chaîne ouverte : le membre se déplace librement dans l'espace (une CAR, un coup de pied). Ce programme est dominé par la chaîne fermée, généralement moins risquée pour les débutants.</dd>
+<dt>Isométrique / Concentrique / Excentrique</dt><dd>Isométrique : maintenir une position immobile sous tension (maintien en Hollow Body). Concentrique : le muscle se raccourcit sous charge (se relever d'un squat). Excentrique : le muscle s'allonge sous charge (descendre dans le squat avec contrôle).</dd>
+<dt>Force en fin d'amplitude</dt><dd>La force exprimée à la toute limite extérieure de l'amplitude d'une articulation, plutôt qu'au milieu. C'est la raison pour laquelle les CARs précèdent toute compétence chargée — on ne veut pas d'une force limitée au « milieu sûr » d'une amplitude.</dd>
+<dt>Deload</dt><dd>Une période d'intensité volontairement réduite (les semaines de consolidation de ce programme — 4, 8, 12 — fonctionnent comme des deloads légers) qui laisse l'adaptation rattraper l'entraînement.</dd>
+<dt>Flow state / Flow (mouvement)</dt><dd>À la fois un état psychologique d'absorption et de concentration sans effort, et (dans la terminologie Animal Flow) une séquence autocomposée reliant plusieurs schèmes — le Mois 3, Semaine 11 entraîne les deux sens à la fois.</dd>
+<dt>Apprentissage moteur</dt><dd>La façon dont le système nerveux acquiert un nouveau schème de mouvement, typiquement à travers trois étapes : cognitive (laborieuse, maladroite), associative (affinement) et autonome (automatique). Mentionné au Mois 2 lorsque Beast Crawl et Ape semblent maladroits au début.</dd>
+</dl>
+</section>
+
+<section id="journal">
+<h2>Journal de mouvement et suivi</h2>
+<p class="intro">Considérez ceci moins comme un carnet d'entraînement que comme un carnet de laboratoire — l'objectif est de capturer un signal qualitatif (ce qui a semblé fluide, ce qui a semblé bloqué) en plus des quelques chiffres qui comptent. Un simple fichier texte ou un tableur fait très bien l'affaire ; la structure ci-dessous compte plus que l'outil.</p>
+<div class="journalblock">
+<h4>Entrée quotidienne (après chaque séance)</h4>
+<div class="tablewrap"><table>
+<thead><tr><th>Champ</th><th>Ce qu'il faut noter</th></tr></thead>
+<tbody>
+<tr><td>Date et séance (A/B/C)</td><td>Quel créneau du cycle, pour suivre la fréquence du cycle au fil du temps</td></tr>
+<tr><td>Durée</td><td>Temps réel d'entraînement, pas celui prévu</td></tr>
+<tr><td>Qualité de mouvement (1–5)</td><td>Votre propre évaluation du contrôle ressenti pendant la séance — pas l'effort, pas les courbatures</td></tr>
+<tr><td>Ce qui a semblé fluide</td><td>Un ou deux mouvements précis — cela constitue une trace de progrès réel que les temps de maintien bruts ne captent pas</td></tr>
+<tr><td>Ce qui a semblé bloqué</td><td>Là où vous avez remarqué des tremblements, une apnée ou une compensation — c'est là que doit aller l'attention de la prochaine séance</td></tr>
+<tr><td>Douleur / signaux d'arrêt</td><td>Toute douleur vive, pincement articulaire ou engourdissement — notez-le même si c'est minime, et régressez ce mouvement la prochaine fois</td></tr>
+<tr><td>Une note d'exploration</td><td>Tout ce qui a été remarqué pendant le bloc d'exploration libre — ces notes annoncent souvent les déclics du mois suivant</td></tr>
+</tbody></table></div>
+</div>
+<div class="journalblock">
+<h4>Bilan hebdomadaire (fin de chaque semaine)</h4>
+<p style="margin:0;font-size:.94rem;">Parcourez les entrées quotidiennes de la semaine et répondez en quelques phrases : quel schéma est revenu plus d'une fois (un point de blocage récurrent, un déclic récurrent) ? Une articulation ou une forme en particulier est-elle systématiquement le facteur limitant ? Le dosage de la semaine suivante doit-il différer de ce qui est écrit, en fonction de la façon dont le corps a réellement réagi — et non de ce qui « devrait » se passer selon le plan ?</p>
+</div>
+<div class="journalblock">
+<h4>Journal d'évaluation mensuel</h4>
+<p style="margin:0 0 .6rem;font-size:.94rem;">Tenez un seul tableau continu couvrant les quatre points de contrôle (Bilan initial, Fin M1, Fin M2, Final), avec les items de la batterie en lignes et les points de contrôle en colonnes — c'est le seul élément du journal qui mérite d'être mis en forme comme un vrai tableau ou une feuille de calcul, puisque l'objectif est justement de lire les chiffres sur une ligne.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Test</th><th>Bilan initial</th><th>Fin M1</th><th>Fin M2</th><th>Final</th></tr></thead>
+<tbody>
+<tr><td>Maintien Deep Squat (s)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>Maintien Hollow Body (s)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>Équilibre sur une jambe (s)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>…</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody></table></div>
+</div>
+</section>
+
+<section id="resources">
+<h2>Ressources générales</h2>
+<p class="intro">Les lectures spécifiques à chaque mois sont listées à la fin de chaque document de Mois. Voici des références plus larges, valables pour l'ensemble du programme, à explorer à tout moment.</p>
+<ul class="reslist">
+<li><span class="topic">Ido Portal — Movement Culture</span>Conférences et entretiens de fond sur l'entraînement du mouvement comme pratique généraliste plutôt que comme sport — l'influence la plus directe sur la philosophie générale de ce programme.</li>
+<li><span class="topic">Animal Flow (Mike Fitch)</span>La source du vocabulaire Beast/Ape/Crab/Scorpion/Sit-Through utilisé tout au long de ce programme.</li>
+<li><span class="topic">Functional Range Conditioning (Dr. Andreo Spina)</span>La source des CARs et de la distinction amplitude active/passive utilisée dans tout le glossaire et les sections sur les erreurs.</li>
+<li><span class="topic">GMB Fitness</span>Des progressions structurées de gymnastique au poids du corps (préparation des poignets, elbow levers, théorie du handstand) — un complément utile une fois à l'aise avec le rythme de ce programme.</li>
+<li><span class="topic">MovNat (Erwan Le Corre)</span>La source du cadrage du Get-Up autour du « mouvement sans gaspillage, compétence en conditions réelles », et de la branche « terrain naturel » mentionnée dans la section « Après la Semaine 12 » du Mois 3.</li>
+</ul>
+</section>
+
+</main>
+</div>
+
+<footer>
+The Practice — un programme fondamental de 12 semaines consacré au mouvement au sol, à la mobilité et au contrôle corporel. Quatre documents : cet Accueil, la Bibliothèque d'exercices, et les Mois 1 à 3.
+</footer>
+
+<button id="themeToggle" type="button" aria-label="Basculer entre le thème clair et sombre" title="Basculer clair / sombre">
+  <span aria-hidden="true">◐</span>
+</button>
+<style>
+#themeToggle{position:fixed;right:1rem;bottom:1rem;z-index:50;width:2.6rem;height:2.6rem;
+ border-radius:50%;border:1px solid var(--line);background:var(--stone-raised);color:var(--ink);
+ font-size:1.1rem;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);
+ display:flex;align-items:center;justify-content:center;}
+#themeToggle:hover{border-color:var(--moss);}
+#themeToggle:focus-visible{outline:2px solid var(--ember);outline-offset:3px;}
+@media print{#themeToggle{display:none;}}
+</style>
+<script>
+(function(){
+  var root=document.documentElement, KEY='practice-theme';
+  try{var s=localStorage.getItem(KEY); if(s){root.setAttribute('data-theme',s);}}catch(e){}
+  var b=document.getElementById('themeToggle');
+  b&&b.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    var next=cur==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem(KEY,next);}catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>
