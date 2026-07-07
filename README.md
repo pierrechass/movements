@@ -3,6 +3,11 @@
 A self-contained 12-week movement foundations program. No build step, no server,
 no internet connection required.
 
+## Live version
+
+**https://pierrechass.github.io/movements/** — hosted for free on GitHub Pages,
+works on any device (including phones) with an internet connection.
+
 ## How to use
 
 Open **`index.html`** in any web browser (double-click it). Everything else is
